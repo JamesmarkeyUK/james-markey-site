@@ -34,23 +34,23 @@ import { site } from '~/data/site';
 
   <div class="relative overflow-hidden rounded-lg border border-paper-50/10 bg-ink-900">
     <div class="aspect-[16/10]">
-      <img
-        src="/travels/nomadlist-snapshot.png"
-        alt="World map showing 59 countries James Markey has visited"
-        class="h-full w-full object-cover"
+      <iframe
+        src={`https://nomadlist.com/@${site.nomadlistUsername}/widget`}
+        class="h-full w-full border-0"
+        title="James Markey's travel map on Nomadlist"
         loading="lazy"
-      />
+      ></iframe>
     </div>
-    <a
-      href={site.nomadlistUrl}
-      target="_blank"
-      rel="noopener noreferrer"
-      class="absolute inset-0 flex items-end justify-end p-6"
-      aria-label="Open live Nomadlist map"
-    >
-      <span class="rounded-md bg-ink-950/80 px-3 py-2 font-mono text-xs uppercase tracking-[0.18em] text-paper-50 backdrop-blur-sm">
+    <div class="pointer-events-none absolute inset-0 flex items-end justify-end p-4">
+      <a
+        href={site.nomadlistUrl}
+        target="_blank"
+        rel="noopener noreferrer"
+        class="pointer-events-auto rounded-md bg-ink-950/80 px-3 py-2 font-mono text-xs uppercase tracking-[0.18em] text-paper-50 backdrop-blur-sm hover:bg-ink-950"
+        aria-label="Open live Nomadlist map"
+      >
         Open map ↗
-      </span>
-    </a>
+      </a>
+    </div>
   </div>
 </div>
