@@ -1,5 +1,7 @@
 ---
+import { Image } from 'astro:assets';
 import { site } from '~/data/site';
+import portrait from '~/assets/portrait.jpg';
 ---
 
 <section
@@ -34,11 +36,14 @@ import { site } from '~/data/site';
 
       <div class="hidden lg:block">
         <div class="aspect-[4/5] w-full overflow-hidden rounded-lg border border-paper-50/10 bg-ink-900">
-          <slot name="portrait">
-            <div class="flex h-full items-center justify-center text-center font-mono text-xs uppercase tracking-[0.18em] text-muted-500">
-              Portrait
-            </div>
-          </slot>
+          <Image
+            src={portrait}
+            alt="Portrait of James Markey"
+            widths={[480, 800, 1200]}
+            sizes="(min-width: 1024px) 40vw, 100vw"
+            loading="eager"
+            class="h-full w-full object-cover"
+          />
         </div>
       </div>
     </div>
