@@ -6,42 +6,36 @@ interface Props {
 }
 
 const { variant = 'home' } = Astro.props;
-const linkPrefix = variant === 'home' ? '' : '/';
-const homeNavItems = sections.filter((s) => s.id !== 'bio');
 ---
 
 <header
-  class="sticky top-0 z-30 border-b border-ink-950/10 bg-paper-50/85 backdrop-blur-md backdrop-saturate-150"
+  class:list={[
+    'absolute left-0 right-0 top-0 z-30',
+    variant === 'home' ? 'text-paper-50' : 'text-ink-900',
+  ]}
 >
-  <div class="container-wide flex h-16 items-center justify-between">
-    <a
-      href="/"
-      class="inline-flex items-center gap-2.5 text-ink-950"
-      aria-label={`${site.name} home`}
-    >
-      <img src="/favicon.svg" alt="" class="h-9 w-9 rounded-lg" width="36" height="36" />
-      <span class="text-lg font-extrabold uppercase tracking-[0.06em]">
-        James<span class="ml-1.5 text-accent">Markey</span>
-      </span>
+  <div class="container-wide flex items-center justify-between py-6">
+    <a href="/" class="label-eyebrow tracking-[0.22em] hover:text-accent">
+      {site.name}
     </a>
 
     {
       variant === 'home' ? (
-        <nav class="flex items-center gap-4 sm:gap-6" aria-label="Primary">
-          {homeNavItems.map((s) => (
-            <a
-              href={`${linkPrefix}#${s.id}`}
-              class="text-[15px] font-medium text-muted-700 transition-colors hover:text-accent"
-            >
-              {s.label}
-            </a>
-          ))}
+        <nav aria-label="Primary">
+          <ul class="hidden gap-8 md:flex">
+            {sections
+              .filter((s) => s.id !== 'bio')
+              .map((s) => (
+                <li>
+                  <a href={`#${s.id}`} class="label-eyebrow hover:text-accent">
+                    {s.label}
+                  </a>
+                </li>
+              ))}
+          </ul>
         </nav>
       ) : (
-        <a
-          href="/"
-          class="text-[15px] font-medium text-muted-700 transition-colors hover:text-accent"
-        >
+        <a href="/" class="label-eyebrow hover:text-accent">
           ← Back home
         </a>
       )
