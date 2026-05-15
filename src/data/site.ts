@@ -3,7 +3,7 @@ export const site = {
   url: 'https://jamesmarkey.co.uk',
   title: 'James Markey — Entrepreneur, Export Champion, Traveller',
   description:
-    'Personal site of James Markey: founder of UNI SIM, co-founder of HRV Simulation, UK Export Champion for the Department for Business and Trade, and mental-health advocate.',
+    'Personal site of James Markey: founder of UNI SIM, Commercial Director of HRV Simulation, UK Export Champion for the Department for Business and Trade, and mental-health advocate.',
   tagline: 'Founder, exporter, traveller — building tools at the edge of dental and medical simulation.',
   countryCount: 59,
   nomadlistUsername: 'jamesmarkey',

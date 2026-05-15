@@ -18,11 +18,11 @@ export const work: Role[] = [
     location: 'United Kingdom',
   },
   {
-    role: 'Co-founder',
+    role: 'Commercial Director',
     org: 'HRV Simulation',
     tenure: 'Current',
     summary:
-      'Innovation in clinical simulation training — partner and shareholder in the French parent business.',
+      'Driving commercial strategy and international growth for the French innovator in clinical simulation training.',
     href: 'https://hrv-simulation.com',
     location: 'France',
   },
