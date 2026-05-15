@@ -43,6 +43,16 @@
   }
 }
 
+@layer utilities {
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+}
+
 @layer components {
   .container-prose {
     @apply mx-auto w-full max-w-prose px-6;
