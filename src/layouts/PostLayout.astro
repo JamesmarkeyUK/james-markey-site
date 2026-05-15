@@ -1,0 +1,100 @@
+---
+import { Image } from 'astro:assets';
+import type { CollectionEntry } from 'astro:content';
+import BaseLayout from './BaseLayout.astro';
+import '~/styles/prose.css';
+
+interface Props {
+  post: CollectionEntry<'posts'>;
+}
+
+const { post } = Astro.props;
+const { title, pubDate, category, hero, heroAlt, excerpt, gallery } = post.data;
+
+const formattedDate = pubDate.toLocaleDateString('en-GB', {
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric',
+});
+---
+
+<BaseLayout
+  title={title}
+  description={excerpt}
+  type="article"
+  pubDate={pubDate}
+  navVariant="post"
+>
+  <article>
+    <header class="border-b border-ink-950/10 bg-paper-50 pb-16 pt-32 md:pt-40">
+      <div class="container-wide">
+        <p class="label-eyebrow text-muted-500">
+          <a href="/#news" class="hover:text-accent">News</a>
+          <span class="mx-2 opacity-40">·</span>
+          <span>{category}</span>
+        </p>
+        <h1 class="mt-6 max-w-4xl font-display text-4xl font-semibold leading-[1.05] tracking-tight text-ink-950 md:text-6xl">
+          {title}
+        </h1>
+        <p class="mt-6 font-mono text-sm uppercase tracking-[0.18em] text-muted-500">
+          <time datetime={pubDate.toISOString()}>{formattedDate}</time>
+          <span class="mx-2 opacity-40">·</span>
+          <span>By James Markey</span>
+        </p>
+      </div>
+    </header>
+
+    <div class="bg-paper-50">
+      <div class="container-wide pt-12">
+        <figure class="overflow-hidden rounded-lg">
+          <Image
+            src={hero}
+            alt={heroAlt}
+            widths={[640, 1024, 1600]}
+            sizes="(min-width: 1280px) 72rem, 100vw"
+            class="w-full"
+          />
+        </figure>
+      </div>
+
+      <div class="container-prose py-16 md:py-24">
+        <div class="prose">
+          <slot />
+        </div>
+      </div>
+
+      {
+        gallery && gallery.length > 0 && (
+          <div class="container-wide pb-24">
+            <p class="label-eyebrow mb-6 text-muted-500">— More images</p>
+            <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              {gallery.map((img) => (
+                <figure class="overflow-hidden rounded-lg">
+                  <Image
+                    src={img.src}
+                    alt={img.alt}
+                    widths={[400, 800]}
+                    sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
+                    class="aspect-[4/3] w-full object-cover"
+                  />
+                </figure>
+              ))}
+            </div>
+          </div>
+        )
+      }
+
+      <div class="border-t border-ink-950/10">
+        <div class="container-wide py-16">
+          <a
+            href="/#news"
+            class="inline-flex items-center gap-2 font-mono text-xs uppercase tracking-[0.18em] text-ink-950 hover:text-accent"
+          >
+            <span aria-hidden="true">←</span>
+            <span>All news</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </article>
+</BaseLayout>

@@ -1,0 +1,31 @@
+---
+import BaseLayout from '~/layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="Not found" noindex>
+  <section class="section section--dark min-h-[70vh]">
+    <div class="container-wide flex flex-col items-start gap-6 pt-32">
+      <p class="label-eyebrow text-accent">— 404</p>
+      <h1 class="font-display text-6xl font-semibold leading-[0.95] tracking-tight md:text-8xl">
+        This page<br />took a wrong turn.
+      </h1>
+      <p class="max-w-xl text-xl text-paper-50/70">
+        The address you opened doesn't match anything on the site. It may have moved, or it may never have existed.
+      </p>
+      <div class="mt-4 flex flex-wrap gap-4">
+        <a
+          href="/"
+          class="rounded-md bg-accent px-5 py-3 font-mono text-xs uppercase tracking-[0.18em] text-ink-950 hover:bg-accent-hover"
+        >
+          Back to home
+        </a>
+        <a
+          href="/#news"
+          class="rounded-md border border-paper-50/20 px-5 py-3 font-mono text-xs uppercase tracking-[0.18em] text-paper-50 hover:border-accent hover:text-accent"
+        >
+          Latest news →
+        </a>
+      </div>
+    </div>
+  </section>
+</BaseLayout>

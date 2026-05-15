@@ -1,0 +1,8 @@
+---
+import { investments } from '~/data/investments';
+import InvestmentCard from './InvestmentCard.astro';
+---
+
+<div class="grid gap-6 md:grid-cols-3">
+  {investments.map((investment) => <InvestmentCard investment={investment} />)}
+</div>

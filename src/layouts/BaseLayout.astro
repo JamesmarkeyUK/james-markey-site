@@ -1,0 +1,58 @@
+---
+import '@fontsource-variable/fraunces';
+import '@fontsource-variable/inter';
+import '@fontsource-variable/jetbrains-mono';
+import '~/styles/global.css';
+
+import SEO from '~/components/SEO.astro';
+import SkipLink from '~/components/SkipLink.astro';
+import Nav from '~/components/Nav.astro';
+import Footer from '~/components/Footer.astro';
+
+interface Props {
+  title?: string;
+  description?: string;
+  image?: string;
+  type?: 'website' | 'article';
+  pubDate?: Date;
+  navVariant?: 'home' | 'post';
+  noindex?: boolean;
+}
+
+const {
+  title,
+  description,
+  image,
+  type = 'website',
+  pubDate,
+  navVariant = 'home',
+  noindex = false,
+} = Astro.props;
+---
+
+<!doctype html>
+<html lang="en-GB">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#0A0A0B" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <SEO
+      title={title}
+      description={description}
+      image={image}
+      type={type}
+      pubDate={pubDate}
+      noindex={noindex}
+    />
+    <slot name="head" />
+  </head>
+  <body>
+    <SkipLink />
+    <Nav variant={navVariant} />
+    <main id="main">
+      <slot />
+    </main>
+    <Footer />
+  </body>
+</html>

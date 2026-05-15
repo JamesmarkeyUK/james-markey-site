@@ -1,0 +1,56 @@
+---
+import { site } from '~/data/site';
+---
+
+<div class="grid gap-12 lg:grid-cols-[1fr_1.4fr] lg:items-center">
+  <div>
+    <p class="font-display text-5xl font-semibold leading-tight text-paper-50 md:text-6xl">
+      {site.countryCount}<span class="text-accent">.</span>
+    </p>
+    <p class="mt-4 text-xl text-paper-50/70">
+      Countries and counting — come say <em>hey</em> while I'm travelling.
+    </p>
+    <div class="mt-8 flex flex-col gap-3 text-sm">
+      <a
+        href={site.nomadlistUrl}
+        target="_blank"
+        rel="noopener noreferrer"
+        class="inline-flex items-center gap-2 font-mono uppercase tracking-[0.18em] text-paper-50 hover:text-accent"
+      >
+        <span>View live map on Nomadlist</span>
+        <span aria-hidden="true">→</span>
+      </a>
+      <a
+        href={site.managerAbroadUrl}
+        target="_blank"
+        rel="noopener noreferrer"
+        class="inline-flex items-center gap-2 font-mono uppercase tracking-[0.18em] text-paper-50 hover:text-accent"
+      >
+        <span>Read The Manager Abroad blog</span>
+        <span aria-hidden="true">→</span>
+      </a>
+    </div>
+  </div>
+
+  <div class="relative overflow-hidden rounded-lg border border-paper-50/10 bg-ink-900">
+    <div class="aspect-[16/10]">
+      <img
+        src="/travels/nomadlist-snapshot.png"
+        alt="World map showing 59 countries James Markey has visited"
+        class="h-full w-full object-cover"
+        loading="lazy"
+      />
+    </div>
+    <a
+      href={site.nomadlistUrl}
+      target="_blank"
+      rel="noopener noreferrer"
+      class="absolute inset-0 flex items-end justify-end p-6"
+      aria-label="Open live Nomadlist map"
+    >
+      <span class="rounded-md bg-ink-950/80 px-3 py-2 font-mono text-xs uppercase tracking-[0.18em] text-paper-50 backdrop-blur-sm">
+        Open map ↗
+      </span>
+    </a>
+  </div>
+</div>

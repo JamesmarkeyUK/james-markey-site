@@ -1,0 +1,31 @@
+---
+import type { Role } from '~/data/work';
+
+interface Props {
+  role: Role;
+}
+
+const { role } = Astro.props;
+---
+
+<a
+  href={role.href}
+  target="_blank"
+  rel="noopener noreferrer"
+  class="group flex flex-col gap-6 rounded-lg border border-paper-50/10 bg-ink-900 p-8 transition-colors hover:border-accent"
+>
+  <div class="flex items-start justify-between">
+    <p class="label-eyebrow text-accent">{role.tenure}</p>
+    <span class="text-accent transition-transform group-hover:translate-x-1">↗</span>
+  </div>
+  <div>
+    <h3 class="font-display text-2xl font-semibold leading-tight text-paper-50">
+      {role.role}
+    </h3>
+    <p class="mt-2 font-mono text-sm uppercase tracking-[0.12em] text-muted-400">
+      {role.org}
+      {role.location && <span class="ml-2 opacity-60">· {role.location}</span>}
+    </p>
+  </div>
+  <p class="text-base leading-relaxed text-paper-50/70">{role.summary}</p>
+</a>

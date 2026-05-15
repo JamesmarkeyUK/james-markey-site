@@ -1,0 +1,140 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '~/layouts/BaseLayout.astro';
+import Hero from '~/components/Hero.astro';
+import SectionHeader from '~/components/SectionHeader.astro';
+import PostGrid from '~/components/PostGrid.astro';
+import WorkGrid from '~/components/WorkGrid.astro';
+import InvestmentGrid from '~/components/InvestmentGrid.astro';
+import TravelEmbed from '~/components/TravelEmbed.astro';
+
+const posts = (await getCollection('posts', ({ data }) => !data.draft))
+  .sort((a, b) => b.data.pubDate.getTime() - a.data.pubDate.getTime());
+
+const latestPosts = posts.slice(0, 6);
+---
+
+<BaseLayout>
+  <Hero />
+
+  <section id="bio" class="section section--dark">
+    <div class="container-wide">
+      <SectionHeader
+        number="00"
+        label="About"
+        tone="dark"
+        title="Founder, exporter, mental-health advocate."
+      />
+      <div class="grid gap-12 lg:grid-cols-2">
+        <div class="space-y-6 text-lg leading-relaxed text-paper-50/80">
+          <p>
+            I'm James — founder and CEO of <a class="link-underline text-paper-50" href="https://unisim.co.uk" target="_blank" rel="noopener noreferrer">UNI SIM</a>, the UK's #1 manufacturer of haptic training simulators for dental and medical education. I co-founded <a class="link-underline text-paper-50" href="https://hrv-simulation.com" target="_blank" rel="noopener noreferrer">HRV Simulation</a> in France and serve as a volunteer <a class="link-underline text-paper-50" href="https://www.great.gov.uk" target="_blank" rel="noopener noreferrer">Export Champion</a> for the UK Department for Business and Trade.
+          </p>
+          <p>
+            I live with bipolar disorder and founded <a class="link-underline text-paper-50" href="https://bipolarbear.app" target="_blank" rel="noopener noreferrer">Bipolar Bear</a> — a non-profit app supporting people living with the same condition. The story has been covered in <em>The Times</em>, on BBC Radio 5 Live, and by the UK government.
+          </p>
+          <p>
+            Outside the day job I'm a polyglot, motorbike enthusiast, clay-pigeon shooter at Bisley, and I've visited 59 countries and counting. Most of my travel writing lives at <a class="link-underline text-paper-50" href="https://themanagerabroad.co.uk" target="_blank" rel="noopener noreferrer">The Manager Abroad</a>.
+          </p>
+        </div>
+        <div class="space-y-8">
+          <div class="rounded-lg border border-paper-50/10 bg-ink-900 p-8">
+            <p class="label-eyebrow text-accent">— Quick facts</p>
+            <dl class="mt-6 space-y-4 text-base">
+              <div class="flex justify-between gap-4 border-b border-paper-50/10 pb-3">
+                <dt class="text-paper-50/60">Based</dt>
+                <dd class="text-paper-50">United Kingdom · often elsewhere</dd>
+              </div>
+              <div class="flex justify-between gap-4 border-b border-paper-50/10 pb-3">
+                <dt class="text-paper-50/60">Companies</dt>
+                <dd class="text-paper-50">UNI SIM · HRV Simulation</dd>
+              </div>
+              <div class="flex justify-between gap-4 border-b border-paper-50/10 pb-3">
+                <dt class="text-paper-50/60">Languages</dt>
+                <dd class="text-paper-50">English · French · learning more</dd>
+              </div>
+              <div class="flex justify-between gap-4">
+                <dt class="text-paper-50/60">Countries</dt>
+                <dd class="text-paper-50">59 & counting</dd>
+              </div>
+            </dl>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="news" class="section section--light">
+    <div class="container-wide">
+      <div class="flex flex-wrap items-end justify-between gap-6">
+        <SectionHeader
+          number="01"
+          label="News"
+          title="Recent press, talks and adventures."
+          lede="Photo journals from trade missions, interviews, awards and the occasional dental simulator delivery."
+        />
+        {
+          posts.length > 6 && (
+            <a
+              href="#news"
+              class="font-mono text-xs uppercase tracking-[0.18em] text-ink-950 hover:text-accent"
+            >
+              View all →
+            </a>
+          )
+        }
+      </div>
+      {
+        latestPosts.length > 0 ? (
+          <PostGrid posts={latestPosts} tone="light" />
+        ) : (
+          <div class="rounded-lg border border-dashed border-ink-950/15 bg-paper-100 p-12 text-center">
+            <p class="font-mono text-xs uppercase tracking-[0.18em] text-muted-500">
+              No posts yet
+            </p>
+            <p class="mt-4 text-ink-800">
+              Run <code class="rounded bg-ink-950/5 px-2 py-1 font-mono">npm run migrate</code> to import your existing posts from WordPress.
+            </p>
+          </div>
+        )
+      }
+    </div>
+  </section>
+
+  <section id="work" class="section section--dark">
+    <div class="container-wide">
+      <SectionHeader
+        number="02"
+        label="Work"
+        tone="dark"
+        title="Where I show up day-to-day."
+        lede="Two operating companies and a volunteer role for the UK government."
+      />
+      <WorkGrid />
+    </div>
+  </section>
+
+  <section id="investments" class="section section--light">
+    <div class="container-wide">
+      <SectionHeader
+        number="03"
+        label="Investments"
+        title="Small bets on people I trust."
+        lede="A handful of UK businesses I've backed personally."
+      />
+      <InvestmentGrid />
+    </div>
+  </section>
+
+  <section id="travels" class="section section--dark">
+    <div class="container-wide">
+      <SectionHeader
+        number="04"
+        label="Travels"
+        tone="dark"
+        title="59 countries and counting."
+      />
+      <TravelEmbed />
+    </div>
+  </section>
+</BaseLayout>

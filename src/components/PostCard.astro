@@ -1,0 +1,69 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import { Image } from 'astro:assets';
+
+interface Props {
+  post: CollectionEntry<'posts'>;
+  tone?: 'dark' | 'light';
+}
+
+const { post, tone = 'light' } = Astro.props;
+const { title, pubDate, category, hero, heroAlt, excerpt } = post.data;
+const date = pubDate.toLocaleDateString('en-GB', {
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric',
+});
+---
+
+<a
+  href={`/${post.slug}/`}
+  class:list={[
+    'group block overflow-hidden rounded-lg transition-all',
+    tone === 'dark'
+      ? 'bg-ink-900 ring-1 ring-paper-50/10 hover:ring-accent'
+      : 'bg-paper-100 ring-1 ring-ink-950/5 hover:ring-accent',
+  ]}
+>
+  <div class="aspect-[4/3] overflow-hidden">
+    <Image
+      src={hero}
+      alt={heroAlt}
+      widths={[400, 800]}
+      sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
+      class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+    />
+  </div>
+  <div class="p-6">
+    <p
+      class:list={[
+        'label-eyebrow',
+        tone === 'dark' ? 'text-muted-400' : 'text-muted-500',
+      ]}
+    >
+      <time datetime={pubDate.toISOString()}>{date}</time>
+      <span class="mx-2 opacity-40">·</span>
+      <span>{category}</span>
+    </p>
+    <h3
+      class:list={[
+        'mt-4 font-display text-xl font-semibold leading-snug tracking-tight transition-colors group-hover:text-accent',
+        tone === 'dark' ? 'text-paper-50' : 'text-ink-950',
+      ]}
+    >
+      {title}
+    </h3>
+    {
+      excerpt && (
+        <p
+          class:list={[
+            'mt-3 line-clamp-3 text-base leading-relaxed',
+            tone === 'dark' ? 'text-paper-50/70' : 'text-ink-800',
+          ]}
+        >
+          {excerpt}
+        </p>
+      )
+    }
+  </div>
+</a>

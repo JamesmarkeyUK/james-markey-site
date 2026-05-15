@@ -1,0 +1,58 @@
+---
+import { site } from '~/data/site';
+import { socials } from '~/data/socials';
+import NewsletterForm from './NewsletterForm.astro';
+
+const year = new Date().getFullYear();
+---
+
+<footer class="bg-ink-950 text-paper-50">
+  <div class="container-wide section">
+    <div class="grid gap-16 md:grid-cols-2 lg:grid-cols-3">
+      <div>
+        <p class="label-eyebrow text-muted-400">— Get in touch</p>
+        <p class="mt-6 font-display text-3xl leading-tight">
+          Hello there. Drop a line, say hey, or follow along.
+        </p>
+      </div>
+
+      <div>
+        <p class="label-eyebrow text-muted-400">— Elsewhere</p>
+        <ul class="mt-6 space-y-3">
+          {
+            socials.map((s) => (
+              <li>
+                <a
+                  href={s.href}
+                  class="link-underline text-paper-50"
+                  rel={s.href.startsWith('http') ? 'noopener noreferrer' : undefined}
+                  target={s.href.startsWith('http') ? '_blank' : undefined}
+                >
+                  {s.label}
+                  {s.handle && <span class="ml-2 text-muted-400">{s.handle}</span>}
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+
+      <div>
+        <p class="label-eyebrow text-muted-400">— Newsletter</p>
+        <p class="mt-6 text-paper-50/80">
+          Occasional notes on what I'm building, where I'm travelling, and the odd lesson learned.
+        </p>
+        <NewsletterForm class="mt-6" />
+      </div>
+    </div>
+
+    <div class="mt-24 flex flex-col gap-2 border-t border-paper-50/10 pt-8 text-sm text-muted-400 md:flex-row md:items-center md:justify-between">
+      <p>© {year} {site.name}. All rights reserved.</p>
+      <p class="font-mono text-xs uppercase tracking-[0.18em]">
+        <a href="/rss.xml" class="hover:text-accent">RSS</a>
+        <span class="mx-3 text-muted-700">·</span>
+        <a href="/sitemap-index.xml" class="hover:text-accent">Sitemap</a>
+      </p>
+    </div>
+  </div>
+</footer>

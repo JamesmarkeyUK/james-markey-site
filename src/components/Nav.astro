@@ -1,0 +1,44 @@
+---
+import { sections, site } from '~/data/site';
+
+interface Props {
+  variant?: 'home' | 'post';
+}
+
+const { variant = 'home' } = Astro.props;
+---
+
+<header
+  class:list={[
+    'absolute left-0 right-0 top-0 z-30',
+    variant === 'home' ? 'text-paper-50' : 'text-ink-900',
+  ]}
+>
+  <div class="container-wide flex items-center justify-between py-6">
+    <a href="/" class="label-eyebrow tracking-[0.22em] hover:text-accent">
+      {site.name}
+    </a>
+
+    {
+      variant === 'home' ? (
+        <nav aria-label="Primary">
+          <ul class="hidden gap-8 md:flex">
+            {sections
+              .filter((s) => s.id !== 'bio')
+              .map((s) => (
+                <li>
+                  <a href={`#${s.id}`} class="label-eyebrow hover:text-accent">
+                    {s.label}
+                  </a>
+                </li>
+              ))}
+          </ul>
+        </nav>
+      ) : (
+        <a href="/" class="label-eyebrow hover:text-accent">
+          ← Back home
+        </a>
+      )
+    }
+  </div>
+</header>

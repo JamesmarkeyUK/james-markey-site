@@ -1,0 +1,31 @@
+---
+interface Props {
+  number: string;
+  label: string;
+  title: string;
+  lede?: string;
+  tone?: 'dark' | 'light';
+}
+
+const { number, label, title, lede, tone = 'light' } = Astro.props;
+const accentColor = tone === 'dark' ? 'text-paper-50/60' : 'text-muted-500';
+const titleColor = tone === 'dark' ? 'text-paper-50' : 'text-ink-950';
+---
+
+<div class="mb-16 max-w-3xl">
+  <p class:list={['label-eyebrow flex items-center gap-3', accentColor]}>
+    <span>{number}</span>
+    <span class="h-px w-8 bg-current opacity-40"></span>
+    <span>{label}</span>
+  </p>
+  <h2 class:list={['mt-6 font-display text-4xl font-semibold leading-[1.05] tracking-tight md:text-5xl', titleColor]}>
+    {title}
+  </h2>
+  {
+    lede && (
+      <p class:list={['mt-6 text-xl leading-relaxed', tone === 'dark' ? 'text-paper-50/70' : 'text-ink-800']}>
+        {lede}
+      </p>
+    )
+  }
+</div>

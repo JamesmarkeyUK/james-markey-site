@@ -1,0 +1,35 @@
+---
+import { site } from '~/data/site';
+
+interface Props {
+  class?: string;
+}
+
+const { class: className = '' } = Astro.props;
+const action = `https://buttondown.email/api/emails/embed-subscribe/${site.buttondownUsername}`;
+---
+
+<form
+  action={action}
+  method="post"
+  target="popupwindow"
+  onsubmit="window.open('https://buttondown.email/jamesmarkey', 'popupwindow')"
+  class:list={['flex flex-col gap-3 sm:flex-row', className]}
+>
+  <label for="newsletter-email" class="sr-only">Email address</label>
+  <input
+    id="newsletter-email"
+    type="email"
+    name="email"
+    required
+    placeholder="you@somewhere.com"
+    class="flex-1 rounded-md border border-paper-50/20 bg-ink-900 px-4 py-3 text-paper-50 placeholder:text-muted-500 focus:border-accent focus:outline-none"
+  />
+  <input type="hidden" value="1" name="embed" />
+  <button
+    type="submit"
+    class="rounded-md bg-accent px-5 py-3 font-mono text-xs uppercase tracking-[0.18em] text-ink-950 transition-colors hover:bg-accent-hover"
+  >
+    Subscribe
+  </button>
+</form>

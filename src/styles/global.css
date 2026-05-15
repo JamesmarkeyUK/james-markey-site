@@ -1,0 +1,60 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-paper-50 font-sans text-ink-900 antialiased;
+  }
+
+  ::selection {
+    @apply bg-accent text-ink-950;
+  }
+
+  :focus-visible {
+    @apply outline-2 outline-offset-2 outline-accent;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.001ms !important;
+      transition-duration: 0.001ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
+
+@layer components {
+  .container-prose {
+    @apply mx-auto w-full max-w-prose px-6;
+  }
+  .container-wide {
+    @apply mx-auto w-full max-w-6xl px-6 lg:px-8;
+  }
+  .section {
+    @apply py-24 lg:py-32;
+  }
+  .section--dark {
+    @apply bg-ink-950 text-paper-50;
+  }
+  .section--light {
+    @apply bg-paper-50 text-ink-900;
+  }
+
+  .label-eyebrow {
+    @apply font-mono text-xs uppercase tracking-[0.18em];
+  }
+
+  .link-underline {
+    @apply relative inline-block text-current underline decoration-accent decoration-2 underline-offset-4 transition-colors hover:text-accent;
+  }
+}
