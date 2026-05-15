@@ -2,6 +2,16 @@
 @tailwind components;
 @tailwind utilities;
 
+@keyframes bar-pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.35;
+  }
+}
+
 @layer base {
   html {
     -webkit-font-smoothing: antialiased;
@@ -56,5 +66,20 @@
 
   .link-underline {
     @apply relative inline-block text-current underline decoration-accent decoration-2 underline-offset-4 transition-colors hover:text-accent;
+  }
+
+  .brand-strip {
+    position: fixed;
+    inset: 0 0 auto 0;
+    z-index: 40;
+    height: 4px;
+    pointer-events: none;
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      theme('colors.accent.DEFAULT') 50%,
+      transparent 100%
+    );
+    animation: bar-pulse 2.4s ease-in-out infinite;
   }
 }
