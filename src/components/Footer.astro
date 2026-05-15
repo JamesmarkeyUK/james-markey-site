@@ -14,6 +14,12 @@ const year = new Date().getFullYear();
         <p class="mt-6 font-display text-3xl leading-tight">
           Hello there. Drop a line, say hey, or follow along.
         </p>
+        <a
+          href="mailto:inbox@jamesmarkey.co.uk"
+          class="link-underline mt-6 inline-block text-paper-50"
+        >
+          inbox@jamesmarkey.co.uk
+        </a>
       </div>
 
       <div>
@@ -46,13 +52,8 @@ const year = new Date().getFullYear();
       </div>
     </div>
 
-    <div class="mt-24 flex flex-col gap-2 border-t border-paper-50/10 pt-8 text-sm text-muted-400 md:flex-row md:items-center md:justify-between">
+    <div class="mt-24 border-t border-paper-50/10 pt-8 text-sm text-muted-400">
       <p>© {year} {site.name}. All rights reserved.</p>
-      <p class="font-mono text-xs uppercase tracking-[0.18em]">
-        <a href="/rss.xml" class="hover:text-accent">RSS</a>
-        <span class="mx-3 text-muted-700">·</span>
-        <a href="/sitemap-index.xml" class="hover:text-accent">Sitemap</a>
-      </p>
     </div>
   </div>
 </footer>
