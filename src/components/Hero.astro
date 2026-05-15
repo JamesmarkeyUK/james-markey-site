@@ -8,6 +8,20 @@ import portrait from '~/assets/portrait.jpg';
   id="hero"
   class="relative isolate overflow-hidden bg-ink-950 pb-20 pt-32 text-paper-50 md:pb-32 md:pt-48"
 >
+  <!-- Mobile: faded portrait sits behind the text as a background element -->
+  <div class="pointer-events-none absolute inset-0 lg:hidden" aria-hidden="true">
+    <div class="absolute right-0 top-0 h-full w-2/3 opacity-20">
+      <Image
+        src={portrait}
+        alt=""
+        widths={[480]}
+        sizes="60vw"
+        loading="eager"
+        class="h-full w-full object-cover object-top"
+      />
+    </div>
+  </div>
+
   <div class="container-wide relative">
     <div class="grid items-end gap-12 lg:grid-cols-[1.4fr_1fr]">
       <div>
@@ -34,7 +48,8 @@ import portrait from '~/assets/portrait.jpg';
         </div>
       </div>
 
-      <div class="block">
+      <!-- Desktop: portrait as a full-opacity grid card -->
+      <div class="hidden lg:block">
         <div class="aspect-[4/5] w-full overflow-hidden rounded-lg border border-paper-50/10 bg-ink-900">
           <Image
             src={portrait}
