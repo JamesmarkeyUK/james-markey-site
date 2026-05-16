@@ -10,9 +10,9 @@ interface Props {
 const { posts, tone = 'light' } = Astro.props;
 ---
 
-<div class="no-scrollbar flex gap-8 overflow-x-auto snap-x snap-mandatory pb-4 sm:grid sm:grid-cols-2 sm:overflow-visible sm:pb-0 lg:grid-cols-3">
+<div class="no-scrollbar flex gap-8 overflow-x-auto snap-x snap-mandatory pb-4">
   {posts.map((post) => (
-    <div class="snap-start shrink-0 w-[85vw] sm:w-auto">
+    <div class="snap-start shrink-0 w-[85vw] sm:w-[45vw] lg:w-[30vw] xl:w-[24rem]">
       <PostCard post={post} tone={tone} />
     </div>
   ))}
