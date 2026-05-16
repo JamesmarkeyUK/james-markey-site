@@ -1,4 +1,4 @@
-export type Continent = 'North America' | 'South America' | 'Europe' | 'Africa' | 'Asia' | 'Oceania';
+export type Continent = 'North America' | 'South America' | 'Europe' | 'Africa' | 'Asia' | 'Oceania' | 'Antarctica';
 
 export const CONTINENTS: Continent[] = [
   'North America',
@@ -7,6 +7,7 @@ export const CONTINENTS: Continent[] = [
   'Africa',
   'Asia',
   'Oceania',
+  'Antarctica',
 ];
 
 // SVG viewBox zoom targets per continent (x, y, w, h in 1000×500 space)
@@ -17,6 +18,7 @@ export const CONTINENT_VIEWBOXES: Record<Continent, [number, number, number, num
   'Africa':        [440, 135, 235, 310],
   'Asia':          [545, 60, 430, 265],
   'Oceania':       [775, 255, 230, 180],
+  'Antarctica':    [0, 440, 1000, 58],
 };
 
 export const countryContinent: Record<string, Continent> = {
@@ -86,4 +88,7 @@ export const countryContinent: Record<string, Continent> = {
   PG: 'Oceania', PN: 'Oceania', PW: 'Oceania', SB: 'Oceania', TK: 'Oceania',
   TO: 'Oceania', TV: 'Oceania', UM: 'Oceania', VU: 'Oceania', WF: 'Oceania',
   WS: 'Oceania',
+
+  // Antarctica
+  AQ: 'Antarctica',
 };
