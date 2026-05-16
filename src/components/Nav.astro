@@ -6,6 +6,7 @@ interface Props {
 }
 
 const { variant = 'home' } = Astro.props;
+const isHome = Astro.url.pathname === '/';
 ---
 
 <header
@@ -15,7 +16,7 @@ const { variant = 'home' } = Astro.props;
   ]}
 >
   <div class="container-wide flex items-center justify-between py-6">
-    <a href="/" class="label-eyebrow tracking-[0.22em] hover:text-accent">
+    <a href={isHome ? '#' : '/'} class="label-eyebrow tracking-[0.22em] hover:text-accent">
       {site.name}
     </a>
 
