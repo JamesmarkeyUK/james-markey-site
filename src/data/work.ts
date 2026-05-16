@@ -5,6 +5,7 @@ export type Role = {
   summary: string;
   href: string;
   location?: string;
+  featured?: boolean;
 };
 
 export const work: Role[] = [
@@ -34,5 +35,6 @@ export const work: Role[] = [
       'Mentoring early-stage UK exporters on behalf of the UK Government. Trade missions and policy contribution.',
     href: 'https://www.great.gov.uk',
     location: 'United Kingdom',
+    featured: true,
   },
 ];

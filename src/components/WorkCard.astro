@@ -12,7 +12,10 @@ const { role } = Astro.props;
   href={role.href}
   target="_blank"
   rel="noopener noreferrer"
-  class="group flex flex-col gap-6 rounded-lg border border-paper-50/10 bg-ink-900 p-8 transition-colors hover:border-accent"
+  class:list={[
+    'group flex flex-col gap-6 rounded-lg border bg-ink-900 p-8 transition-colors hover:border-accent',
+    role.featured ? 'border-accent' : 'border-paper-50/10',
+  ]}
 >
   <div class="flex items-start justify-between">
     <p class="label-eyebrow text-accent">{role.tenure}</p>
