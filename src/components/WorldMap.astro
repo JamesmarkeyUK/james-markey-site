@@ -48,7 +48,6 @@ const continentViewboxes = Object.fromEntries(
     </button>
     {CONTINENTS.map((c) => {
       const count = continentCounts[c] ?? 0;
-      if (count === 0) return null;
       const vb = CONTINENT_VIEWBOXES[c];
       return (
         <button
@@ -182,60 +181,61 @@ const continentViewboxes = Object.fromEntries(
       </button>
     </div>
 
-    <!-- Country detail panel (side drawer on desktop, bottom sheet on mobile) -->
-    <div
-      class="detail-panel pointer-events-none absolute inset-y-0 right-0 hidden w-56 flex-col border-l border-paper-50/10 bg-ink-950/95 backdrop-blur-sm"
-      data-detail-panel
-      role="dialog"
-      aria-live="polite"
-    >
-      <div class="pointer-events-auto flex h-full flex-col p-4">
-        <div class="flex items-start justify-between gap-2">
-          <h3 class="font-display text-base font-semibold leading-tight text-paper-50" data-detail-country></h3>
-          <button
-            type="button"
-            class="-mr-1 -mt-1 shrink-0 rounded p-1 text-paper-50/50 hover:text-accent"
-            aria-label="Close"
-            data-detail-close
-          >
-            <svg width="12" height="12" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
-              <path d="M2 2 L12 12 M12 2 L2 12" />
-            </svg>
-          </button>
-        </div>
-        <p class="mt-0.5 font-mono text-[10px] uppercase tracking-[0.14em] text-accent" data-detail-continent></p>
-        <dl class="mt-3 flex flex-col gap-y-2.5 text-xs">
-          <div data-detail-capital-row>
-            <dt class="font-mono uppercase tracking-[0.14em] text-paper-50/50">Capital</dt>
-            <dd class="mt-0.5 text-paper-50" data-detail-capital></dd>
-          </div>
-          <div data-detail-capital-pop-row>
-            <dt class="font-mono uppercase tracking-[0.14em] text-paper-50/50">Capital pop.</dt>
-            <dd class="mt-0.5 text-paper-50" data-detail-capital-pop></dd>
-          </div>
-          <div data-detail-country-pop-row>
-            <dt class="font-mono uppercase tracking-[0.14em] text-paper-50/50">Country pop.</dt>
-            <dd class="mt-0.5 text-paper-50" data-detail-country-pop></dd>
-          </div>
-          <div data-detail-leader-row class="hidden">
-            <dt class="font-mono uppercase tracking-[0.14em] text-paper-50/50" data-detail-leader-title></dt>
-            <dd class="mt-0.5 text-paper-50" data-detail-leader></dd>
-          </div>
-          <div data-detail-cities-row>
-            <dt class="font-mono uppercase tracking-[0.14em] text-paper-50/50">Cities visited</dt>
-            <dd class="mt-0.5 text-paper-50" data-detail-cities></dd>
-          </div>
-          <div data-detail-trips-row>
-            <dt class="font-mono uppercase tracking-[0.14em] text-paper-50/50">Trips</dt>
-            <dd class="mt-0.5 text-paper-50" data-detail-trips></dd>
-          </div>
-          <div data-detail-last-row>
-            <dt class="font-mono uppercase tracking-[0.14em] text-paper-50/50">Last visit</dt>
-            <dd class="mt-0.5 text-paper-50" data-detail-last></dd>
-          </div>
-        </dl>
-      </div>
+  </div>
+</div>
+
+<!-- Detail panel: fixed-positioned so it escapes overflow-hidden, layered above everything -->
+<div
+  class="detail-panel"
+  data-detail-panel
+  role="dialog"
+  aria-live="polite"
+>
+  <div class="detail-panel-inner">
+    <div class="flex items-start justify-between gap-2">
+      <h3 class="font-display text-base font-semibold leading-tight text-paper-50" data-detail-country></h3>
+      <button
+        type="button"
+        class="-mr-1 -mt-1 shrink-0 rounded p-1 text-paper-50/50 hover:text-accent"
+        aria-label="Close"
+        data-detail-close
+      >
+        <svg width="12" height="12" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+          <path d="M2 2 L12 12 M12 2 L2 12" />
+        </svg>
+      </button>
     </div>
+    <p class="mt-0.5 font-mono text-[10px] uppercase tracking-[0.14em] text-accent" data-detail-continent></p>
+    <dl class="mt-3 flex flex-col gap-y-2.5 text-xs">
+      <div data-detail-capital-row>
+        <dt class="font-mono uppercase tracking-[0.14em] text-paper-50/50">Capital</dt>
+        <dd class="mt-0.5 text-paper-50" data-detail-capital></dd>
+      </div>
+      <div data-detail-capital-pop-row>
+        <dt class="font-mono uppercase tracking-[0.14em] text-paper-50/50">Capital pop.</dt>
+        <dd class="mt-0.5 text-paper-50" data-detail-capital-pop></dd>
+      </div>
+      <div data-detail-country-pop-row>
+        <dt class="font-mono uppercase tracking-[0.14em] text-paper-50/50">Country pop.</dt>
+        <dd class="mt-0.5 text-paper-50" data-detail-country-pop></dd>
+      </div>
+      <div data-detail-leader-row class="hidden">
+        <dt class="font-mono uppercase tracking-[0.14em] text-paper-50/50" data-detail-leader-title></dt>
+        <dd class="mt-0.5 text-paper-50" data-detail-leader></dd>
+      </div>
+      <div data-detail-cities-row>
+        <dt class="font-mono uppercase tracking-[0.14em] text-paper-50/50">Cities visited</dt>
+        <dd class="mt-0.5 text-paper-50" data-detail-cities></dd>
+      </div>
+      <div data-detail-trips-row>
+        <dt class="font-mono uppercase tracking-[0.14em] text-paper-50/50">Trips</dt>
+        <dd class="mt-0.5 text-paper-50" data-detail-trips></dd>
+      </div>
+      <div data-detail-last-row>
+        <dt class="font-mono uppercase tracking-[0.14em] text-paper-50/50">Last visit</dt>
+        <dd class="mt-0.5 text-paper-50" data-detail-last></dd>
+      </div>
+    </dl>
   </div>
 </div>
 
@@ -293,13 +293,26 @@ const continentViewboxes = Object.fromEntries(
     background: rgba(10, 10, 11, 0.9);
   }
 
-  /* Detail panel */
+  /* Detail panel — fixed positioned, above everything */
   .detail-panel {
-    transition: opacity 180ms ease;
+    display: none;
+    position: fixed;
+    z-index: 9999;
+    overflow: hidden;
+    border: 1px solid rgba(250, 250, 247, 0.12);
+    border-radius: 0.5rem;
+    background: rgba(10, 10, 11, 0.97);
+    backdrop-filter: blur(8px);
+    box-shadow: 0 8px 40px rgba(0,0,0,0.6);
   }
   .detail-panel.is-open {
-    display: flex !important;
-    pointer-events: auto;
+    display: block;
+  }
+  .detail-panel-inner {
+    padding: 1rem;
+    height: 100%;
+    overflow-y: auto;
+    overscroll-behavior: contain;
   }
 
   /* Pins */
@@ -366,7 +379,8 @@ const continentViewboxes = Object.fromEntries(
   function initWorldMap(root) {
     const svg = root.querySelector('[data-svg]');
     const container = root.querySelector('[data-map-container]');
-    const panel = root.querySelector('[data-detail-panel]');
+    // Panel lives outside the overflow-hidden container in the DOM
+    const panel = document.querySelector('[data-detail-panel]');
     if (!svg || !container || !panel) return;
 
     const closeBtn = panel.querySelector('[data-detail-close]');
@@ -588,6 +602,29 @@ const continentViewboxes = Object.fromEntries(
     const pinEls = Array.from(root.querySelectorAll('.pin'));
     let activeId = null;
 
+    function positionPanel() {
+      const rect = container.getBoundingClientRect();
+      const isMobile = window.innerWidth < 640;
+      if (isMobile) {
+        Object.assign(panel.style, {
+          left: '0', right: '0', bottom: '0', top: 'auto',
+          width: '100%', maxHeight: '60vh',
+          borderRadius: '0.75rem 0.75rem 0 0',
+          borderLeft: 'none', borderRight: 'none', borderBottom: 'none',
+        });
+      } else {
+        const PANEL_W = 224; // w-56 = 14rem ≈ 224px
+        Object.assign(panel.style, {
+          top: rect.top + 'px',
+          right: (window.innerWidth - rect.right) + 'px',
+          bottom: (window.innerHeight - rect.bottom) + 'px',
+          left: 'auto', width: PANEL_W + 'px', maxHeight: '',
+          borderRadius: '0 0.5rem 0.5rem 0',
+          borderLeft: '1px solid rgba(250,250,247,0.12)',
+        });
+      }
+    }
+
     function openPanel(pin) {
       const d = pin.dataset;
       if (fields.country) fields.country.textContent = d.country ?? '';
@@ -607,6 +644,7 @@ const continentViewboxes = Object.fromEntries(
       if (fields.trips) fields.trips.textContent = d.tripCount || '—';
       if (fields.last) fields.last.textContent = d.lastVisit || '—';
 
+      positionPanel();
       panel.classList.add('is-open');
       pinEls.forEach((el) => el.classList.toggle('is-active', el === pin));
       activeId = pin.dataset.pinId ?? null;
@@ -636,6 +674,14 @@ const continentViewboxes = Object.fromEntries(
     closeBtn?.addEventListener('click', (e) => { e.stopPropagation(); closePanel(); });
 
     document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closePanel(); });
+
+    window.addEventListener('resize', () => {
+      if (activeId) positionPanel();
+    });
+
+    window.addEventListener('scroll', () => {
+      if (activeId) positionPanel();
+    }, { passive: true });
 
     container.addEventListener('click', (e) => {
       if (!e.target.closest('.pin') && !e.target.closest('[data-detail-panel]')) {
