@@ -13,5 +13,9 @@
   "assets": {
     "binding": "ASSETS",
     "directory": "dist"
-  }
+  },
+  "routes": [
+    { "pattern": "jamesmarkey.co.uk", "custom_domain": true },
+    { "pattern": "www.jamesmarkey.co.uk", "custom_domain": true }
+  ]
 }
