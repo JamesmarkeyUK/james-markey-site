@@ -33,6 +33,30 @@ for (const p of pins) {
 const continentViewboxes = Object.fromEntries(
   CONTINENTS.map((c) => [c, CONTINENT_VIEWBOXES[c]])
 );
+
+// Fixed home / office locations (not travel pins)
+const rawBasePins = [
+  {
+    id: 'guildford',
+    label: 'Guildford, Surrey',
+    tagline: 'Home · United Kingdom',
+    connections: 'UNI SIM HQ · Export Champion',
+    lat: 51.24, lon: -0.57,
+    offsetX: -10, offsetY: 0,
+  },
+  {
+    id: 'laval',
+    label: 'Laval, France',
+    tagline: 'Office · France',
+    connections: 'HRV Simulation HQ',
+    lat: 48.07, lon: -0.77,
+    offsetX: 8, offsetY: 0,
+  },
+];
+const basePins = rawBasePins.map((p) => {
+  const { x, y } = project(p.lat, p.lon);
+  return { ...p, x: x + p.offsetX, y: y + p.offsetY };
+});
 ---
 
 <div class="world-map-wrapper space-y-3" data-world-map>
@@ -159,6 +183,27 @@ const continentViewboxes = Object.fromEntries(
             </g>
           ))
         }
+      </g>
+
+      <g class="base-pins">
+        {basePins.map((bp) => (
+          <g
+            class="base-pin cursor-pointer"
+            data-base-id={bp.id}
+            data-base-label={bp.label}
+            data-base-tagline={bp.tagline}
+            data-base-connections={bp.connections}
+            transform={`translate(${bp.x}, ${bp.y})`}
+            tabindex="0"
+            role="button"
+            aria-label={`${bp.label} — click for details`}
+          >
+            <circle class="base-halo" r="10" />
+            <circle class="base-ring" r="5.5" />
+            <circle class="base-dot" r="2.5" />
+            <title>{bp.label}</title>
+          </g>
+        ))}
       </g>
     </svg>
 
@@ -315,7 +360,29 @@ const continentViewboxes = Object.fromEntries(
     overscroll-behavior: contain;
   }
 
-  /* Pins */
+  /* Base (home/office) pins — green */
+  .base-pin { outline: none; }
+  .base-pin .base-dot { fill: #4ade80; }
+  .base-pin .base-ring {
+    fill: none;
+    stroke: #4ade80;
+    stroke-width: 1.5;
+    opacity: 0.6;
+    transition: opacity 220ms ease, stroke-width 220ms ease;
+  }
+  .base-pin .base-halo {
+    fill: #4ade80;
+    opacity: 0;
+    transition: opacity 220ms ease;
+  }
+  .base-pin:hover .base-halo,
+  .base-pin:focus-visible .base-halo { opacity: 0.2; }
+  .base-pin:hover .base-ring,
+  .base-pin:focus-visible .base-ring { opacity: 1; stroke-width: 2; }
+  .base-pin.is-active .base-halo { opacity: 0.28; }
+  .base-pin.is-active .base-ring { opacity: 1; stroke-width: 2.5; }
+
+  /* Travel pins */
   .pin { outline: none; }
   .pin .pin-dot { fill: #F5A524; }
   .pin .pin-ring {
@@ -600,6 +667,8 @@ const continentViewboxes = Object.fromEntries(
 
     // ── Detail panel ───────────────────────────────────────────────
     const pinEls = Array.from(root.querySelectorAll('.pin'));
+    const basePinEls = Array.from(root.querySelectorAll('.base-pin'));
+    const allActiveEls = [...pinEls, ...basePinEls];
     let activeId = null;
 
     function positionPanel() {
@@ -625,36 +694,85 @@ const continentViewboxes = Object.fromEntries(
       }
     }
 
+    // Rows that vary by pin type
+    const capitalRow = panel.querySelector('[data-detail-capital-row]');
+    const capitalPopRow = panel.querySelector('[data-detail-capital-pop-row]');
+    const countryPopRow = panel.querySelector('[data-detail-country-pop-row]');
+    const citiesRow = panel.querySelector('[data-detail-cities-row]');
+    const citiesDt = citiesRow?.querySelector('dt');
+    const tripsRow = panel.querySelector('[data-detail-trips-row]');
+    const lastRow = panel.querySelector('[data-detail-last-row]');
+
     function openPanel(pin) {
       const d = pin.dataset;
-      if (fields.country) fields.country.textContent = d.country ?? '';
-      if (fields.continent) fields.continent.textContent = d.continent ?? '';
-      if (fields.capital) fields.capital.textContent = d.capital || '—';
-      if (fields.capitalPop) fields.capitalPop.textContent = d.capitalPop || '—';
-      if (fields.countryPop) fields.countryPop.textContent = d.countryPop || '—';
+      const isBase = 'baseId' in d;
 
-      const hasLeader = d.leader && d.leaderTitle;
-      if (fields.leaderRow) fields.leaderRow.classList.toggle('hidden', !hasLeader);
-      if (hasLeader) {
-        if (fields.leaderTitle) fields.leaderTitle.textContent = d.leaderTitle;
-        if (fields.leader) fields.leader.textContent = d.leader;
+      if (isBase) {
+        if (fields.country) fields.country.textContent = d.baseLabel ?? '';
+        if (fields.continent) fields.continent.textContent = d.baseTagline ?? '';
+        // Hide travel-specific rows
+        capitalRow?.classList.add('hidden');
+        capitalPopRow?.classList.add('hidden');
+        countryPopRow?.classList.add('hidden');
+        if (fields.leaderRow) fields.leaderRow.classList.add('hidden');
+        tripsRow?.classList.add('hidden');
+        lastRow?.classList.add('hidden');
+        // Show connections
+        citiesRow?.classList.remove('hidden');
+        if (citiesDt) citiesDt.textContent = 'Roles here';
+        if (fields.cities) fields.cities.textContent = d.baseConnections || '—';
+      } else {
+        if (fields.country) fields.country.textContent = d.country ?? '';
+        if (fields.continent) fields.continent.textContent = d.continent ?? '';
+        capitalRow?.classList.remove('hidden');
+        capitalPopRow?.classList.remove('hidden');
+        countryPopRow?.classList.remove('hidden');
+        if (fields.capital) fields.capital.textContent = d.capital || '—';
+        if (fields.capitalPop) fields.capitalPop.textContent = d.capitalPop || '—';
+        if (fields.countryPop) fields.countryPop.textContent = d.countryPop || '—';
+        const hasLeader = d.leader && d.leaderTitle;
+        if (fields.leaderRow) fields.leaderRow.classList.toggle('hidden', !hasLeader);
+        if (hasLeader) {
+          if (fields.leaderTitle) fields.leaderTitle.textContent = d.leaderTitle;
+          if (fields.leader) fields.leader.textContent = d.leader;
+        }
+        citiesRow?.classList.remove('hidden');
+        if (citiesDt) citiesDt.textContent = 'Cities visited';
+        if (fields.cities) fields.cities.textContent = d.cities || '—';
+        tripsRow?.classList.remove('hidden');
+        lastRow?.classList.remove('hidden');
+        if (fields.trips) fields.trips.textContent = d.tripCount || '—';
+        if (fields.last) fields.last.textContent = d.lastVisit || '—';
       }
-
-      if (fields.cities) fields.cities.textContent = d.cities || '—';
-      if (fields.trips) fields.trips.textContent = d.tripCount || '—';
-      if (fields.last) fields.last.textContent = d.lastVisit || '—';
 
       positionPanel();
       panel.classList.add('is-open');
-      pinEls.forEach((el) => el.classList.toggle('is-active', el === pin));
-      activeId = pin.dataset.pinId ?? null;
+      allActiveEls.forEach((el) => el.classList.toggle('is-active', el === pin));
+      activeId = isBase ? ('base-' + d.baseId) : (d.pinId ?? null);
     }
 
     function closePanel() {
       panel.classList.remove('is-open');
-      pinEls.forEach((el) => el.classList.remove('is-active'));
+      allActiveEls.forEach((el) => el.classList.remove('is-active'));
       activeId = null;
     }
+
+    basePinEls.forEach((bp) => {
+      bp.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const id = 'base-' + bp.dataset.baseId;
+        if (activeId === id) closePanel();
+        else openPanel(bp);
+      });
+      bp.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          const id = 'base-' + bp.dataset.baseId;
+          if (activeId === id) closePanel();
+          else openPanel(bp);
+        }
+      });
+    });
 
     pinEls.forEach((pin) => {
       pin.addEventListener('click', (e) => {
@@ -684,7 +802,7 @@ const continentViewboxes = Object.fromEntries(
     }, { passive: true });
 
     container.addEventListener('click', (e) => {
-      if (!e.target.closest('.pin') && !e.target.closest('[data-detail-panel]')) {
+      if (!e.target.closest('.pin') && !e.target.closest('.base-pin') && !e.target.closest('[data-detail-panel]')) {
         closePanel();
       }
     });
