@@ -10,15 +10,15 @@ import portrait from '~/assets/portrait.jpg';
 >
   <!-- Mobile: portrait sits in the top-right behind the text -->
   <div class="pointer-events-none absolute inset-0 lg:hidden" aria-hidden="true">
-    <div class="absolute right-0 top-1/2 h-[75%] w-[55%] -translate-y-1/2 opacity-40"
-         style="mask-image: linear-gradient(to left, black 40%, transparent 100%), linear-gradient(to bottom, black 60%, transparent 100%); mask-composite: intersect; -webkit-mask-image: linear-gradient(to left, black 40%, transparent 100%), linear-gradient(to bottom, black 60%, transparent 100%); -webkit-mask-composite: source-in;">
+    <div class="absolute inset-y-0 right-0 w-[55%] opacity-40"
+         style="mask-image: linear-gradient(to left, black 40%, transparent 100%), linear-gradient(to bottom, black 70%, transparent 100%), linear-gradient(to top, black 70%, transparent 100%); mask-composite: intersect; -webkit-mask-image: linear-gradient(to left, black 40%, transparent 100%), linear-gradient(to bottom, black 70%, transparent 100%), linear-gradient(to top, black 70%, transparent 100%); -webkit-mask-composite: source-in;">
       <Image
         src={portrait}
         alt=""
         widths={[480]}
         sizes="55vw"
         loading="eager"
-        class="h-full w-full object-cover object-top"
+        class="h-full w-full object-cover object-center"
       />
     </div>
   </div>
