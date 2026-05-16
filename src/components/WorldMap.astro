@@ -567,6 +567,22 @@ const basePins = rawBasePins.map((p) => {
       container.style.cursor = '';
     });
 
+    // ── Double-click to zoom in ────────────────────────────────────
+    let lastClick = 0;
+    container.addEventListener('dblclick', (e) => {
+      if (e.target.closest('.pin') || e.target.closest('.base-pin') || e.target.closest('.zoom-btn')) return;
+      e.preventDefault();
+      const rect = container.getBoundingClientRect();
+      const { x: cx, y: cy } = containerToVB(e.clientX - rect.left, e.clientY - rect.top);
+      const target = clampVB({
+        x: cx - (vb.w * ZOOM_STEP) / 2,
+        y: cy - (vb.h * ZOOM_STEP) / 2,
+        w: vb.w * ZOOM_STEP,
+        h: vb.h * ZOOM_STEP,
+      });
+      animateTo(target);
+    });
+
     // ── Touch: pinch-to-zoom + pan ─────────────────────────────────
     let touches = [];
     let touchVB = null;
