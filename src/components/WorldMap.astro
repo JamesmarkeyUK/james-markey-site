@@ -22,10 +22,8 @@ const pins = rawPins.map((p) => {
 });
 ---
 
-<div
-  class="world-map relative aspect-[2/1] w-full overflow-hidden rounded-lg border border-paper-50/10 bg-ink-900"
-  data-world-map
->
+<div class="world-map relative w-full" data-world-map>
+  <div class="relative aspect-[2/1] w-full overflow-hidden rounded-lg border border-paper-50/10 bg-ink-900">
   <svg
     viewBox={`0 0 ${VIEW_W} ${VIEW_H}`}
     preserveAspectRatio="xMidYMid meet"
@@ -170,9 +168,10 @@ const pins = rawPins.map((p) => {
       }
     </g>
   </svg>
+  </div>
 
   <div
-    class="popup pointer-events-none absolute z-10 hidden w-60 -translate-x-1/2 -translate-y-full"
+    class="popup pointer-events-none absolute z-10 hidden w-64 max-w-[calc(100vw-2rem)] -translate-x-1/2 -translate-y-full"
     data-popup
     role="dialog"
     aria-live="polite"
