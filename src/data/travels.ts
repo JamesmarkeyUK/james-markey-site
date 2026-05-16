@@ -1,4 +1,6 @@
 import { countryCentroids } from '~/data/countryCentroids';
+import { countryData } from '~/data/countryData';
+import { countryContinent, type Continent } from '~/data/continents';
 
 const NOMADS_URL = 'https://nomads.com/@jamesmarkey.json';
 
@@ -109,15 +111,17 @@ export type CountryPin = {
   id: string;
   countryCode: string;
   country: string;
+  continent: Continent | '';
   lat: number;
   lon: number;
   cities: string[];
   tripCount: number;
   firstVisit: string;
   lastVisit: string;
+  capital: string;
+  capitalPop: string;
+  countryPop: string;
   curated?: CuratedDetails;
-  // Optional pixel-space nudges, used to separate pins that sit on top of
-  // each other at world scale (e.g. Israel / Palestine).
   pinOffsetX?: number;
   pinOffsetY?: number;
 };
@@ -148,16 +152,21 @@ async function fetchNomadsTrips(): Promise<NomadsTrip[]> {
 function buildFallbackPins(): CountryPin[] {
   return Object.entries(curatedDetails).map(([code, curated]) => {
     const centroid = countryCentroids[code] ?? { lat: 0, lon: 0 };
+    const basic = countryData[code];
     return {
       id: code.toLowerCase(),
       countryCode: code,
       country: curated.country,
+      continent: countryContinent[code] ?? '',
       lat: centroid.lat,
       lon: centroid.lon,
       cities: [],
       tripCount: 0,
       firstVisit: '',
       lastVisit: '',
+      capital: basic?.capital ?? curated.capital,
+      capitalPop: basic?.capitalPop ?? curated.capitalPopulation,
+      countryPop: basic?.countryPop ?? curated.countryPopulation,
       curated,
       pinOffsetX: pinOffsets[code]?.x,
       pinOffsetY: pinOffsets[code]?.y,
@@ -191,17 +200,23 @@ export async function getCountryPins(): Promise<CountryPin[]> {
     const cities = Array.from(new Set(countryTrips.map((t) => t.place))).filter(Boolean);
     const countryName = countryTrips[0]?.country ?? curatedDetails[code]?.country ?? code;
 
+    const basic = countryData[code];
+    const curated = curatedDetails[code];
     pins.push({
       id: code.toLowerCase(),
       countryCode: code,
       country: countryName,
+      continent: countryContinent[code] ?? '',
       lat: centroid.lat,
       lon: centroid.lon,
       cities,
       tripCount: countryTrips.length,
       firstVisit: sorted[0]?.date_start ?? '',
       lastVisit: sorted[sorted.length - 1]?.date_end ?? '',
-      curated: curatedDetails[code],
+      capital: basic?.capital ?? curated?.capital ?? '',
+      capitalPop: basic?.capitalPop ?? curated?.capitalPopulation ?? '',
+      countryPop: basic?.countryPop ?? curated?.countryPopulation ?? '',
+      curated,
       pinOffsetX: pinOffsets[code]?.x,
       pinOffsetY: pinOffsets[code]?.y,
     });
