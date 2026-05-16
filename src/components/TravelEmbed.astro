@@ -32,25 +32,27 @@ import { site } from '~/data/site';
     </div>
   </div>
 
-  <div class="relative overflow-hidden rounded-lg border border-paper-50/10 bg-ink-900">
-    <div class="aspect-[16/10]">
-      <iframe
-        src={`https://nomadlist.com/@${site.nomadlistUsername}/widget`}
-        class="h-full w-full border-0"
-        title="James Markey's travel map on Nomadlist"
-        loading="lazy"
-      ></iframe>
+  <a
+    href={site.nomadlistUrl}
+    target="_blank"
+    rel="noopener noreferrer"
+    class="group relative flex aspect-[16/10] items-center justify-center overflow-hidden rounded-lg border border-paper-50/10 bg-ink-900 transition-colors hover:border-accent"
+    aria-label="Open live Nomadlist map"
+  >
+    <!-- dot-grid world-map suggestion -->
+    <div
+      class="absolute inset-0 opacity-[0.07]"
+      style="background-image: radial-gradient(circle, #FAFAF7 1px, transparent 1px); background-size: 18px 18px;"
+    ></div>
+    <!-- central CTA -->
+    <div class="relative flex flex-col items-center gap-4 text-center">
+      <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round" class="text-paper-50/40 transition-colors group-hover:text-accent">
+        <circle cx="12" cy="12" r="10"/>
+        <path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+      </svg>
+      <span class="rounded-md bg-ink-950/80 px-4 py-2 font-mono text-xs uppercase tracking-[0.18em] text-paper-50 backdrop-blur-sm transition-colors group-hover:bg-accent group-hover:text-ink-950">
+        Open map on Nomadlist ↗
+      </span>
     </div>
-    <div class="pointer-events-none absolute inset-0 flex items-end justify-end p-4">
-      <a
-        href={site.nomadlistUrl}
-        target="_blank"
-        rel="noopener noreferrer"
-        class="pointer-events-auto rounded-md bg-ink-950/80 px-3 py-2 font-mono text-xs uppercase tracking-[0.18em] text-paper-50 backdrop-blur-sm hover:bg-ink-950"
-        aria-label="Open live Nomadlist map"
-      >
-        Open map ↗
-      </a>
-    </div>
-  </div>
+  </a>
 </div>
