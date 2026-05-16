@@ -1,0 +1,443 @@
+---
+import { getCountryPins } from '~/data/travels';
+
+const VIEW_W = 1000;
+const VIEW_H = 500;
+
+function project(lat: number, lon: number) {
+  return {
+    x: ((lon + 180) / 360) * VIEW_W,
+    y: ((90 - lat) / 180) * VIEW_H,
+  };
+}
+
+const rawPins = await getCountryPins();
+const pins = rawPins.map((p) => {
+  const { x, y } = project(p.lat, p.lon);
+  return {
+    ...p,
+    x: x + (p.pinOffsetX ?? 0),
+    y: y + (p.pinOffsetY ?? 0),
+  };
+});
+---
+
+<div
+  class="world-map relative aspect-[2/1] w-full overflow-hidden rounded-lg border border-paper-50/10 bg-ink-900"
+  data-world-map
+>
+  <svg
+    viewBox={`0 0 ${VIEW_W} ${VIEW_H}`}
+    preserveAspectRatio="xMidYMid meet"
+    class="absolute inset-0 h-full w-full"
+    role="img"
+    aria-label="World map highlighting countries James has visited"
+  >
+    <defs>
+      <pattern id="land-dots" width="9" height="9" patternUnits="userSpaceOnUse">
+        <circle cx="4.5" cy="4.5" r="1.25" fill="currentColor" />
+      </pattern>
+    </defs>
+
+    <g class="text-paper-50/45">
+      <!-- North America -->
+      <path
+        d="M 30,105 C 80,90 140,80 210,82 C 270,84 310,95 335,120 C 345,150 330,180 305,200 C 285,220 260,245 235,265 C 215,278 195,278 175,265 C 150,240 135,210 120,185 C 100,165 80,150 60,135 C 45,125 35,115 30,105 Z"
+        fill="url(#land-dots)"
+      />
+      <!-- Greenland -->
+      <path
+        d="M 378,32 C 410,25 445,30 460,55 C 467,72 458,85 438,86 C 412,86 388,80 375,68 C 370,55 372,42 378,32 Z"
+        fill="url(#land-dots)"
+      />
+      <!-- Central America bridge -->
+      <path
+        d="M 230,215 C 250,222 265,232 278,245 C 285,255 282,265 270,265 C 255,260 240,245 228,228 Z"
+        fill="url(#land-dots)"
+      />
+      <!-- South America -->
+      <path
+        d="M 282,222 C 320,218 360,232 380,272 C 395,308 396,352 386,398 C 372,438 342,460 318,455 C 292,445 280,420 277,385 C 272,355 270,322 272,288 C 274,258 277,235 282,222 Z"
+        fill="url(#land-dots)"
+      />
+      <!-- UK / Ireland -->
+      <path
+        d="M 448,108 C 458,103 470,108 472,122 C 470,135 460,140 450,135 C 442,128 442,115 448,108 Z"
+        fill="url(#land-dots)"
+      />
+      <!-- Europe -->
+      <path
+        d="M 470,95 C 510,82 565,82 605,92 C 625,108 620,135 600,155 C 575,168 540,170 510,165 C 485,155 470,138 465,118 C 465,108 467,100 470,95 Z"
+        fill="url(#land-dots)"
+      />
+      <!-- Africa -->
+      <path
+        d="M 478,168 C 525,165 580,172 615,190 C 640,215 645,250 635,288 C 622,325 605,360 585,392 C 572,415 553,425 535,418 C 512,408 498,382 492,355 C 483,322 480,288 480,255 C 480,222 478,195 478,168 Z"
+        fill="url(#land-dots)"
+      />
+      <!-- Arabian Peninsula -->
+      <path
+        d="M 605,178 C 635,178 660,195 668,222 C 660,245 632,250 610,240 C 598,222 598,200 605,178 Z"
+        fill="url(#land-dots)"
+      />
+      <!-- Sinai + Levant (Egypt NE, Israel, Palestine, Lebanon, Syria) -->
+      <path
+        d="M 578,150 L 615,148 L 620,168 L 608,182 L 585,180 Z"
+        fill="url(#land-dots)"
+      />
+      <!-- Asia (main) -->
+      <path
+        d="M 605,80 C 670,72 745,72 815,80 C 870,88 910,105 925,130 C 928,155 905,175 875,185 C 845,195 810,200 780,210 C 755,220 730,232 705,238 C 680,242 655,240 635,225 C 615,210 600,190 595,165 C 593,135 595,108 605,80 Z"
+        fill="url(#land-dots)"
+      />
+      <!-- India peninsula -->
+      <path
+        d="M 685,215 C 710,218 728,230 732,252 C 728,272 710,280 695,278 C 680,272 672,255 672,240 C 675,225 680,218 685,215 Z"
+        fill="url(#land-dots)"
+      />
+      <!-- SE Asia / Indonesia (island cluster) -->
+      <ellipse cx="830" cy="265" rx="22" ry="9" fill="url(#land-dots)" />
+      <ellipse cx="868" cy="278" rx="18" ry="7" fill="url(#land-dots)" />
+      <ellipse cx="800" cy="248" rx="14" ry="6" fill="url(#land-dots)" />
+      <!-- Japan -->
+      <path
+        d="M 892,150 C 905,145 915,158 912,175 C 908,188 898,188 892,180 C 888,170 888,158 892,150 Z"
+        fill="url(#land-dots)"
+      />
+      <!-- Philippines -->
+      <ellipse cx="855" cy="225" rx="9" ry="14" fill="url(#land-dots)" />
+      <!-- Australia -->
+      <path
+        d="M 812,308 C 838,300 880,300 912,310 C 928,322 932,340 920,358 C 902,375 875,382 850,382 C 825,380 805,370 800,352 C 798,332 803,318 812,308 Z"
+        fill="url(#land-dots)"
+      />
+      <!-- New Zealand -->
+      <path
+        d="M 932,365 L 944,370 L 944,388 L 935,392 Z"
+        fill="url(#land-dots)"
+      />
+      <!-- Antarctica strip -->
+      <path
+        d="M 0,458 L 1000,458 L 1000,495 L 0,495 Z"
+        fill="url(#land-dots)"
+      />
+      <!-- Alaska -->
+      <path
+        d="M 25,105 L 75,95 L 90,118 L 65,128 L 35,122 Z"
+        fill="url(#land-dots)"
+      />
+      <!-- Iceland -->
+      <ellipse cx="430" cy="98" rx="12" ry="6" fill="url(#land-dots)" />
+      <!-- Madagascar -->
+      <ellipse cx="645" cy="335" rx="6" ry="16" fill="url(#land-dots)" />
+    </g>
+
+    <g class="pins">
+      {
+        pins.map((pin) => (
+          <g
+            class:list={['pin cursor-pointer', pin.curated && 'pin--curated']}
+            data-pin-id={pin.id}
+            data-country={pin.country}
+            data-is-curated={pin.curated ? 'true' : 'false'}
+            data-capital={pin.curated?.capital ?? ''}
+            data-capital-pop={pin.curated?.capitalPopulation ?? ''}
+            data-country-pop={pin.curated?.countryPopulation ?? ''}
+            data-leader={pin.curated?.leader ?? ''}
+            data-leader-title={pin.curated?.leaderTitle ?? ''}
+            data-cities={pin.cities.join(', ')}
+            data-trip-count={String(pin.tripCount)}
+            data-first-visit={pin.firstVisit}
+            data-last-visit={pin.lastVisit}
+            data-pin-x={pin.x}
+            data-pin-y={pin.y}
+            transform={`translate(${pin.x}, ${pin.y})`}
+            tabindex="0"
+            role="button"
+            aria-label={`${pin.country} — click for details`}
+          >
+            <circle class="pin-halo" r={pin.curated ? 12 : 9} />
+            <circle class="pin-ring" r={pin.curated ? 6.5 : 4.5} />
+            <circle class="pin-dot" r={pin.curated ? 3.5 : 2.25} />
+            <title>{pin.country}</title>
+          </g>
+        ))
+      }
+    </g>
+  </svg>
+
+  <div
+    class="popup pointer-events-none absolute z-10 hidden w-60 -translate-x-1/2 -translate-y-full"
+    data-popup
+    role="dialog"
+    aria-live="polite"
+  >
+    <div class="pointer-events-auto rounded-md border border-paper-50/15 bg-ink-950/95 p-4 text-paper-50 shadow-2xl backdrop-blur-sm">
+      <div class="flex items-start justify-between gap-3">
+        <h3 class="font-display text-lg font-semibold leading-tight" data-popup-country></h3>
+        <button
+          type="button"
+          class="-mr-1 -mt-1 rounded p-1 text-paper-50/60 hover:text-accent"
+          aria-label="Close"
+          data-popup-close
+        >
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+            <path d="M2 2 L12 12 M12 2 L2 12" />
+          </svg>
+        </button>
+      </div>
+      <dl class="mt-3 grid grid-cols-[auto_1fr] gap-x-3 gap-y-2 text-xs" data-popup-curated hidden>
+        <dt class="font-mono uppercase tracking-[0.14em] text-paper-50/50">Capital</dt>
+        <dd class="text-paper-50" data-popup-capital></dd>
+        <dt class="font-mono uppercase tracking-[0.14em] text-paper-50/50">Capital pop.</dt>
+        <dd class="text-paper-50" data-popup-capital-pop></dd>
+        <dt class="font-mono uppercase tracking-[0.14em] text-paper-50/50">Country pop.</dt>
+        <dd class="text-paper-50" data-popup-country-pop></dd>
+        <dt class="font-mono uppercase tracking-[0.14em] text-paper-50/50" data-popup-leader-title></dt>
+        <dd class="text-paper-50" data-popup-leader></dd>
+      </dl>
+      <dl class="mt-3 grid grid-cols-[auto_1fr] gap-x-3 gap-y-2 text-xs" data-popup-light hidden>
+        <dt class="font-mono uppercase tracking-[0.14em] text-paper-50/50">Cities</dt>
+        <dd class="text-paper-50" data-popup-cities></dd>
+        <dt class="font-mono uppercase tracking-[0.14em] text-paper-50/50">Trips</dt>
+        <dd class="text-paper-50" data-popup-trips></dd>
+        <dt class="font-mono uppercase tracking-[0.14em] text-paper-50/50">Last visit</dt>
+        <dd class="text-paper-50" data-popup-last-visit></dd>
+      </dl>
+    </div>
+  </div>
+</div>
+
+<style>
+  .pin {
+    transition: transform 220ms cubic-bezier(0.2, 0.8, 0.2, 1);
+    transform-box: fill-box;
+    transform-origin: center;
+  }
+  .pin .pin-dot {
+    fill: #F5A524; /* accent */
+  }
+  .pin .pin-ring {
+    fill: none;
+    stroke: #F5A524;
+    stroke-width: 1.5;
+    opacity: 0.55;
+    transition: opacity 220ms ease, stroke-width 220ms ease;
+  }
+  .pin .pin-halo {
+    fill: #F5A524;
+    opacity: 0;
+    transition: opacity 220ms ease;
+  }
+  .pin:hover,
+  .pin:focus-visible {
+    outline: none;
+  }
+  .pin:hover .pin-halo,
+  .pin:focus-visible .pin-halo {
+    opacity: 0.18;
+  }
+  .pin:hover .pin-ring,
+  .pin:focus-visible .pin-ring {
+    opacity: 1;
+    stroke-width: 2;
+  }
+  .pin:hover,
+  .pin:focus-visible {
+    transform: translate(var(--px, 0), calc(var(--py, 0) - 4px));
+  }
+  .pin.is-active .pin-halo {
+    opacity: 0.28;
+  }
+  .pin.is-active .pin-ring {
+    opacity: 1;
+    stroke-width: 2.5;
+  }
+  .pin:not(.pin--curated) .pin-dot {
+    fill: #FAFAF7;
+  }
+  .pin:not(.pin--curated) .pin-ring {
+    stroke: #FAFAF7;
+    opacity: 0.4;
+  }
+  .pin:not(.pin--curated) .pin-halo {
+    fill: #FAFAF7;
+  }
+</style>
+
+<script>
+  type PinData = {
+    el: SVGGElement;
+    country: string;
+    isCurated: boolean;
+    capital: string;
+    capitalPop: string;
+    countryPop: string;
+    leader: string;
+    leaderTitle: string;
+    cities: string;
+    tripCount: string;
+    firstVisit: string;
+    lastVisit: string;
+    x: number;
+    y: number;
+  };
+
+  function initWorldMap(root: HTMLElement) {
+    const svg = root.querySelector<SVGSVGElement>('svg');
+    const popup = root.querySelector<HTMLElement>('[data-popup]');
+    if (!svg || !popup) return;
+
+    const closeBtn = popup.querySelector<HTMLButtonElement>('[data-popup-close]');
+    const curatedBlock = popup.querySelector<HTMLElement>('[data-popup-curated]');
+    const lightBlock = popup.querySelector<HTMLElement>('[data-popup-light]');
+    const fields = {
+      country: popup.querySelector<HTMLElement>('[data-popup-country]'),
+      capital: popup.querySelector<HTMLElement>('[data-popup-capital]'),
+      capitalPop: popup.querySelector<HTMLElement>('[data-popup-capital-pop]'),
+      countryPop: popup.querySelector<HTMLElement>('[data-popup-country-pop]'),
+      leader: popup.querySelector<HTMLElement>('[data-popup-leader]'),
+      leaderTitle: popup.querySelector<HTMLElement>('[data-popup-leader-title]'),
+      cities: popup.querySelector<HTMLElement>('[data-popup-cities]'),
+      trips: popup.querySelector<HTMLElement>('[data-popup-trips]'),
+      lastVisit: popup.querySelector<HTMLElement>('[data-popup-last-visit]'),
+    };
+
+    const pinEls = Array.from(root.querySelectorAll<SVGGElement>('.pin'));
+    const pins: PinData[] = pinEls.map((el) => ({
+      el,
+      country: el.dataset.country ?? '',
+      isCurated: el.dataset.isCurated === 'true',
+      capital: el.dataset.capital ?? '',
+      capitalPop: el.dataset.capitalPop ?? '',
+      countryPop: el.dataset.countryPop ?? '',
+      leader: el.dataset.leader ?? '',
+      leaderTitle: el.dataset.leaderTitle ?? 'Leader',
+      cities: el.dataset.cities ?? '',
+      tripCount: el.dataset.tripCount ?? '0',
+      firstVisit: el.dataset.firstVisit ?? '',
+      lastVisit: el.dataset.lastVisit ?? '',
+      x: Number(el.dataset.pinX ?? 0),
+      y: Number(el.dataset.pinY ?? 0),
+    }));
+
+    let activeId: string | null = null;
+
+    function viewBoxToContainerPx(x: number, y: number) {
+      // Convert SVG viewBox coords to container pixel coords, accounting for
+      // preserveAspectRatio="xMidYMid meet" letterboxing.
+      const rect = svg!.getBoundingClientRect();
+      const vb = svg!.viewBox.baseVal;
+      const scale = Math.min(rect.width / vb.width, rect.height / vb.height);
+      const renderedW = vb.width * scale;
+      const renderedH = vb.height * scale;
+      const offsetX = (rect.width - renderedW) / 2;
+      const offsetY = (rect.height - renderedH) / 2;
+      return {
+        px: offsetX + x * scale,
+        py: offsetY + y * scale,
+      };
+    }
+
+    function showPopup(pin: PinData) {
+      if (fields.country) fields.country.textContent = pin.country;
+
+      if (pin.isCurated) {
+        if (fields.capital) fields.capital.textContent = pin.capital;
+        if (fields.capitalPop) fields.capitalPop.textContent = pin.capitalPop;
+        if (fields.countryPop) fields.countryPop.textContent = pin.countryPop;
+        if (fields.leader) fields.leader.textContent = pin.leader;
+        if (fields.leaderTitle) fields.leaderTitle.textContent = pin.leaderTitle;
+        curatedBlock?.removeAttribute('hidden');
+        lightBlock?.setAttribute('hidden', '');
+      } else {
+        if (fields.cities) fields.cities.textContent = pin.cities || '—';
+        if (fields.trips) fields.trips.textContent = pin.tripCount;
+        if (fields.lastVisit) fields.lastVisit.textContent = pin.lastVisit || '—';
+        lightBlock?.removeAttribute('hidden');
+        curatedBlock?.setAttribute('hidden', '');
+      }
+
+      popup!.classList.remove('hidden');
+
+      const { px, py } = viewBoxToContainerPx(pin.x, pin.y);
+      const popupRect = popup!.getBoundingClientRect();
+      const containerRect = root.getBoundingClientRect();
+
+      // Default placement: above the pin, horizontally centered.
+      let left = px;
+      let top = py - 14;
+
+      // Clamp horizontally so the popup doesn't escape the container.
+      const halfW = popupRect.width / 2;
+      const minLeft = halfW + 8;
+      const maxLeft = containerRect.width - halfW - 8;
+      left = Math.max(minLeft, Math.min(maxLeft, left));
+
+      // If there's no room above, flip below.
+      if (top - popupRect.height < 0) {
+        top = py + 28;
+        popup!.style.transform = 'translate(-50%, 0)';
+      } else {
+        popup!.style.transform = 'translate(-50%, -100%)';
+      }
+
+      popup!.style.left = `${left}px`;
+      popup!.style.top = `${top}px`;
+
+      pinEls.forEach((el) => el.classList.toggle('is-active', el === pin.el));
+      activeId = pin.el.dataset.pinId ?? null;
+    }
+
+    function hidePopup() {
+      popup!.classList.add('hidden');
+      pinEls.forEach((el) => el.classList.remove('is-active'));
+      activeId = null;
+    }
+
+    pins.forEach((pin) => {
+      pin.el.addEventListener('click', (e) => {
+        e.stopPropagation();
+        if (activeId === pin.el.dataset.pinId) {
+          hidePopup();
+        } else {
+          showPopup(pin);
+        }
+      });
+      pin.el.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          if (activeId === pin.el.dataset.pinId) hidePopup();
+          else showPopup(pin);
+        }
+      });
+    });
+
+    closeBtn?.addEventListener('click', (e) => {
+      e.stopPropagation();
+      hidePopup();
+    });
+
+    document.addEventListener('click', (e) => {
+      if (!popup!.classList.contains('hidden')) {
+        const target = e.target as Node;
+        if (!popup!.contains(target) && !root.contains(target)) {
+          hidePopup();
+        }
+      }
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') hidePopup();
+    });
+
+    window.addEventListener('resize', () => {
+      if (activeId) {
+        const active = pins.find((p) => p.el.dataset.pinId === activeId);
+        if (active) showPopup(active);
+      }
+    });
+  }
+
+  document.querySelectorAll<HTMLElement>('[data-world-map]').forEach(initWorldMap);
+</script>
