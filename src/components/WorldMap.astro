@@ -41,14 +41,20 @@ const rawBasePins = [
     label: 'Guildford, Surrey',
     tagline: 'Home · United Kingdom',
     connections: 'UNI SIM HQ · Export Champion',
+    population: '~145K city · ~590K borough',
+    founded: 'c. 978 AD (first recorded)',
+    facts: 'County town of Surrey · 35 mi SW of London · Home to University of Surrey · Norman castle ruins on the high street · River Wey Navigation — one of England\'s first commercial waterways (1653)',
     lat: 51.24, lon: -0.57,
     offsetX: -10, offsetY: 0,
   },
   {
     id: 'laval',
-    label: 'Laval, France',
-    tagline: 'Office · France',
+    label: 'Laval, Mayenne',
+    tagline: 'Office · Pays de la Loire, France',
     connections: 'HRV Simulation HQ',
+    population: '~51K city · ~310K département',
+    founded: 'c. 10th century',
+    facts: 'Birthplace of post-impressionist painter Henri Rousseau (1844) · 12th-century Château de Laval overlooks the Mayenne river · Capital of the Mayenne département · ~280 km SW of Paris · Known for its medieval old town',
     lat: 48.07, lon: -0.77,
     offsetX: 8, offsetY: 0,
   },
@@ -193,6 +199,9 @@ const basePins = rawBasePins.map((p) => {
             data-base-label={bp.label}
             data-base-tagline={bp.tagline}
             data-base-connections={bp.connections}
+            data-base-population={bp.population}
+            data-base-founded={bp.founded}
+            data-base-facts={bp.facts}
             transform={`translate(${bp.x}, ${bp.y})`}
             tabindex="0"
             role="button"
@@ -279,6 +288,18 @@ const basePins = rawBasePins.map((p) => {
       <div data-detail-last-row>
         <dt class="font-mono uppercase tracking-[0.14em] text-paper-50/50">Last visit</dt>
         <dd class="mt-0.5 text-paper-50" data-detail-last></dd>
+      </div>
+      <div data-detail-population-row class="hidden">
+        <dt class="font-mono uppercase tracking-[0.14em] text-paper-50/50">Population</dt>
+        <dd class="mt-0.5 text-paper-50" data-detail-population></dd>
+      </div>
+      <div data-detail-founded-row class="hidden">
+        <dt class="font-mono uppercase tracking-[0.14em] text-paper-50/50">Founded</dt>
+        <dd class="mt-0.5 text-paper-50" data-detail-founded></dd>
+      </div>
+      <div data-detail-facts-row class="hidden">
+        <dt class="font-mono uppercase tracking-[0.14em] text-paper-50/50">Notes</dt>
+        <dd class="mt-0.5 text-paper-50 leading-relaxed" data-detail-facts></dd>
       </div>
     </dl>
   </div>
@@ -463,6 +484,9 @@ const basePins = rawBasePins.map((p) => {
       cities: panel.querySelector('[data-detail-cities]'),
       trips: panel.querySelector('[data-detail-trips]'),
       last: panel.querySelector('[data-detail-last]'),
+      population: panel.querySelector('[data-detail-population]'),
+      founded: panel.querySelector('[data-detail-founded]'),
+      facts: panel.querySelector('[data-detail-facts]'),
     };
 
     // ── Viewbox state ──────────────────────────────────────────────
@@ -737,6 +761,16 @@ const basePins = rawBasePins.map((p) => {
         citiesRow?.classList.remove('hidden');
         if (citiesDt) citiesDt.textContent = 'Roles here';
         if (fields.cities) fields.cities.textContent = d.baseConnections || '—';
+        // Show base-specific rows
+        const populationRow = panel.querySelector('[data-detail-population-row]');
+        const foundedRow = panel.querySelector('[data-detail-founded-row]');
+        const factsRow = panel.querySelector('[data-detail-facts-row]');
+        populationRow?.classList.remove('hidden');
+        foundedRow?.classList.remove('hidden');
+        factsRow?.classList.remove('hidden');
+        if (fields.population) fields.population.textContent = d.basePopulation || '—';
+        if (fields.founded) fields.founded.textContent = d.baseFounded || '—';
+        if (fields.facts) fields.facts.textContent = d.baseFacts || '—';
       } else {
         if (fields.country) fields.country.textContent = d.country ?? '';
         if (fields.continent) fields.continent.textContent = d.continent ?? '';
@@ -759,6 +793,10 @@ const basePins = rawBasePins.map((p) => {
         lastRow?.classList.remove('hidden');
         if (fields.trips) fields.trips.textContent = d.tripCount || '—';
         if (fields.last) fields.last.textContent = d.lastVisit || '—';
+        // Hide base-specific rows
+        panel.querySelector('[data-detail-population-row]')?.classList.add('hidden');
+        panel.querySelector('[data-detail-founded-row]')?.classList.add('hidden');
+        panel.querySelector('[data-detail-facts-row]')?.classList.add('hidden');
       }
 
       positionPanel();
