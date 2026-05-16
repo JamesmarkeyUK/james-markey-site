@@ -1,120 +1,211 @@
-export type Place = {
-  id: string;
+import { countryCentroids } from '~/data/countryCentroids';
+
+const NOMADS_URL = 'https://nomads.com/@jamesmarkey.json';
+
+type NomadsTrip = {
+  country: string;
+  country_code: string;
+  country_slug: string;
+  latitude: number;
+  longitude: number;
+  place: string;
+  date_start: string;
+  date_end: string;
+  epoch_start: number;
+};
+
+type NomadsResponse = {
+  trips?: NomadsTrip[];
+};
+
+export type CuratedDetails = {
   country: string;
   capital: string;
   capitalPopulation: string;
   countryPopulation: string;
   leader: string;
   leaderTitle: string;
-  lat: number;
-  lon: number;
-  // Optional display nudge in SVG units, used only to separate pins that
-  // sit on top of each other at world scale (e.g. Israel / Palestine).
-  pinOffsetX?: number;
-  pinOffsetY?: number;
 };
 
-// Snapshot as of May 2026. Update this file when leaders or populations change.
-export const places: Place[] = [
-  {
-    id: 'uzbekistan',
+// Hand-curated extra context for a few of the more exotic stops. Keyed by
+// ISO-3166-1 alpha-2 country code so it can be merged onto nomads data.
+// Snapshot as of May 2026 — update by editing this map.
+export const curatedDetails: Record<string, CuratedDetails> = {
+  UZ: {
     country: 'Uzbekistan',
     capital: 'Tashkent',
     capitalPopulation: '~3.0M',
     countryPopulation: '~36.7M',
     leader: 'Shavkat Mirziyoyev',
     leaderTitle: 'President',
-    lat: 41.31,
-    lon: 69.28,
   },
-  {
-    id: 'pakistan',
+  PK: {
     country: 'Pakistan',
     capital: 'Islamabad',
     capitalPopulation: '~1.1M',
     countryPopulation: '~245M',
     leader: 'Shehbaz Sharif',
     leaderTitle: 'Prime Minister',
-    lat: 33.69,
-    lon: 73.05,
   },
-  {
-    id: 'china',
+  CN: {
     country: 'China',
     capital: 'Beijing',
     capitalPopulation: '~21.9M',
     countryPopulation: '~1.41B',
     leader: 'Xi Jinping',
     leaderTitle: 'President',
-    lat: 39.90,
-    lon: 116.40,
   },
-  {
-    id: 'palestine',
+  PS: {
     country: 'Palestine',
     capital: 'Ramallah (admin.)',
     capitalPopulation: '~38K',
     countryPopulation: '~5.4M',
     leader: 'Mahmoud Abbas',
     leaderTitle: 'President',
-    lat: 31.90,
-    lon: 35.21,
-    pinOffsetX: 4,
   },
-  {
-    id: 'israel',
+  IL: {
     country: 'Israel',
     capital: 'Jerusalem',
     capitalPopulation: '~982K',
     countryPopulation: '~9.9M',
     leader: 'Benjamin Netanyahu',
     leaderTitle: 'Prime Minister',
-    lat: 31.78,
-    lon: 35.22,
-    pinOffsetX: -4,
   },
-  {
-    id: 'ukraine',
+  UA: {
     country: 'Ukraine',
     capital: 'Kyiv',
     capitalPopulation: '~3.0M',
     countryPopulation: '~37M',
     leader: 'Volodymyr Zelenskyy',
     leaderTitle: 'President',
-    lat: 50.45,
-    lon: 30.52,
   },
-  {
-    id: 'egypt',
+  EG: {
     country: 'Egypt',
     capital: 'Cairo',
     capitalPopulation: '~10.2M',
     countryPopulation: '~110M',
     leader: 'Abdel Fattah el-Sisi',
     leaderTitle: 'President',
-    lat: 30.04,
-    lon: 31.24,
   },
-  {
-    id: 'south-africa',
+  ZA: {
     country: 'South Africa',
     capital: 'Pretoria (admin.)',
     capitalPopulation: '~2.9M',
     countryPopulation: '~62M',
     leader: 'Cyril Ramaphosa',
     leaderTitle: 'President',
-    lat: -25.75,
-    lon: 28.19,
   },
-  {
-    id: 'chile',
+  CL: {
     country: 'Chile',
     capital: 'Santiago',
     capitalPopulation: '~7.0M',
     countryPopulation: '~19.8M',
     leader: 'Gabriel Boric',
     leaderTitle: 'President',
-    lat: -33.45,
-    lon: -70.67,
   },
-];
+};
+
+export type CountryPin = {
+  id: string;
+  countryCode: string;
+  country: string;
+  lat: number;
+  lon: number;
+  cities: string[];
+  tripCount: number;
+  firstVisit: string;
+  lastVisit: string;
+  curated?: CuratedDetails;
+  // Optional pixel-space nudges, used to separate pins that sit on top of
+  // each other at world scale (e.g. Israel / Palestine).
+  pinOffsetX?: number;
+  pinOffsetY?: number;
+};
+
+// Some pin pairs sit on the same pixel at world scale — nudge them apart.
+const pinOffsets: Record<string, { x?: number; y?: number }> = {
+  IL: { x: -4 },
+  PS: { x: 4 },
+};
+
+async function fetchNomadsTrips(): Promise<NomadsTrip[]> {
+  try {
+    const res = await fetch(NOMADS_URL, {
+      headers: { Accept: 'application/json' },
+    });
+    if (!res.ok) {
+      console.warn(`[travels] nomads.com returned ${res.status}; using curated fallback`);
+      return [];
+    }
+    const data = (await res.json()) as NomadsResponse;
+    return Array.isArray(data.trips) ? data.trips : [];
+  } catch (err) {
+    console.warn(`[travels] failed to fetch nomads.com: ${(err as Error).message}; using curated fallback`);
+    return [];
+  }
+}
+
+function buildFallbackPins(): CountryPin[] {
+  return Object.entries(curatedDetails).map(([code, curated]) => {
+    const centroid = countryCentroids[code] ?? { lat: 0, lon: 0 };
+    return {
+      id: code.toLowerCase(),
+      countryCode: code,
+      country: curated.country,
+      lat: centroid.lat,
+      lon: centroid.lon,
+      cities: [],
+      tripCount: 0,
+      firstVisit: '',
+      lastVisit: '',
+      curated,
+      pinOffsetX: pinOffsets[code]?.x,
+      pinOffsetY: pinOffsets[code]?.y,
+    };
+  });
+}
+
+export async function getCountryPins(): Promise<CountryPin[]> {
+  const trips = await fetchNomadsTrips();
+  if (trips.length === 0) return buildFallbackPins();
+
+  const byCountry = new Map<string, NomadsTrip[]>();
+  for (const t of trips) {
+    if (!t.country_code) continue;
+    const key = t.country_code.toUpperCase();
+    if (!byCountry.has(key)) byCountry.set(key, []);
+    byCountry.get(key)!.push(t);
+  }
+
+  // Make sure every curated country shows up even if it isn't in the feed.
+  for (const code of Object.keys(curatedDetails)) {
+    if (!byCountry.has(code)) byCountry.set(code, []);
+  }
+
+  const pins: CountryPin[] = [];
+  for (const [code, countryTrips] of byCountry.entries()) {
+    const centroid = countryCentroids[code];
+    if (!centroid) continue;
+
+    const sorted = [...countryTrips].sort((a, b) => a.epoch_start - b.epoch_start);
+    const cities = Array.from(new Set(countryTrips.map((t) => t.place))).filter(Boolean);
+    const countryName = countryTrips[0]?.country ?? curatedDetails[code]?.country ?? code;
+
+    pins.push({
+      id: code.toLowerCase(),
+      countryCode: code,
+      country: countryName,
+      lat: centroid.lat,
+      lon: centroid.lon,
+      cities,
+      tripCount: countryTrips.length,
+      firstVisit: sorted[0]?.date_start ?? '',
+      lastVisit: sorted[sorted.length - 1]?.date_end ?? '',
+      curated: curatedDetails[code],
+      pinOffsetX: pinOffsets[code]?.x,
+      pinOffsetY: pinOffsets[code]?.y,
+    });
+  }
+
+  return pins;
+}
