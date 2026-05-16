@@ -6,7 +6,7 @@ import portrait from '~/assets/portrait.jpg';
 
 <section
   id="hero"
-  class="relative isolate overflow-hidden bg-ink-950 pb-20 pt-32 text-paper-50 md:pb-32 md:pt-48"
+  class="relative isolate flex min-h-svh flex-col overflow-hidden bg-ink-950 pb-20 pt-32 text-paper-50 md:min-h-0 md:block md:pb-32 md:pt-48"
 >
   <!-- Mobile: portrait sits in the top-right behind the text -->
   <div class="pointer-events-none absolute inset-0 lg:hidden" aria-hidden="true">
@@ -23,7 +23,7 @@ import portrait from '~/assets/portrait.jpg';
     </div>
   </div>
 
-  <div class="container-wide relative">
+  <div class="container-wide relative mt-auto md:mt-0">
     <div class="grid items-end gap-12 lg:grid-cols-[1.4fr_1fr]">
       <div>
         <p class="label-eyebrow text-accent">— James Markey</p>
