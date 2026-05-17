@@ -1,0 +1,114 @@
+---
+import BaseLayout from '~/layouts/BaseLayout.astro';
+import { pressImages } from '~/data/press';
+---
+
+<BaseLayout
+  title="Press kit"
+  description="High-resolution photographs of James Markey, free to use for any purpose — press, editorial, commercial or otherwise. No attribution required."
+  navVariant="post"
+>
+  <article>
+    <header class="border-b border-ink-950/10 bg-paper-50 pb-16 pt-32 md:pt-40">
+      <div class="container-wide">
+        <p class="label-eyebrow text-muted-500">
+          <a href="/" class="hover:text-accent">Home</a>
+          <span class="mx-2 opacity-40">·</span>
+          <span>Press</span>
+        </p>
+        <h1 class="mt-6 max-w-4xl font-display text-4xl font-semibold leading-[1.05] tracking-tight text-ink-950 md:text-6xl">
+          Press kit.
+        </h1>
+        <p class="mt-6 max-w-2xl text-xl leading-relaxed text-ink-800">
+          High-resolution photographs of James — <strong class="text-ink-950">free to use for any purpose</strong>. No
+          attribution required, no permission needed, no fee. Use them for press, editorial, commercial, conference
+          decks, podcast covers, or whatever else you need.
+        </p>
+        <p class="mt-4 max-w-2xl text-base text-muted-500">
+          Click any image to open the full-resolution original. Right-click or long-press to save.
+        </p>
+      </div>
+    </header>
+
+    <div class="bg-paper-50">
+      <div class="container-wide py-16 md:py-24">
+        <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {
+            pressImages.map((img) => (
+              <figure class="flex flex-col gap-3">
+                <a
+                  href={img.src}
+                  target="_blank"
+                  rel="noopener"
+                  class="group block overflow-hidden rounded-lg border border-ink-950/10 bg-ink-900 transition-colors hover:border-accent"
+                  aria-label={`Open full-resolution: ${img.alt}`}
+                >
+                  <img
+                    src={img.src}
+                    alt={img.alt}
+                    loading="lazy"
+                    decoding="async"
+                    class:list={[
+                      'w-full object-cover transition-transform duration-500 group-hover:scale-[1.02]',
+                      img.orientation === 'landscape' ? 'aspect-[4/3]' : img.orientation === 'square' ? 'aspect-square' : 'aspect-[3/4]',
+                    ]}
+                  />
+                </a>
+                <figcaption class="flex items-center justify-between gap-3 font-mono text-xs uppercase tracking-[0.14em] text-muted-500">
+                  <span>{img.caption}</span>
+                  <a
+                    href={img.src}
+                    download
+                    class="text-ink-950 hover:text-accent"
+                    aria-label={`Download ${img.caption}`}
+                  >
+                    Download ↓
+                  </a>
+                </figcaption>
+              </figure>
+            ))
+          }
+        </div>
+      </div>
+
+      <div class="border-t border-ink-950/10 bg-paper-100">
+        <div class="container-wide py-16 md:py-20">
+          <div class="grid gap-12 md:grid-cols-2">
+            <div>
+              <p class="label-eyebrow text-muted-500">— Licence</p>
+              <h2 class="mt-4 font-display text-3xl font-semibold leading-tight text-ink-950">
+                No rights reserved.
+              </h2>
+              <p class="mt-4 text-base leading-relaxed text-ink-800">
+                All photographs on this page are released into the public domain. You may copy, modify, distribute and
+                use them — even commercially — without asking, paying, or crediting anyone.
+              </p>
+            </div>
+            <div>
+              <p class="label-eyebrow text-muted-500">— Need something else?</p>
+              <h2 class="mt-4 font-display text-3xl font-semibold leading-tight text-ink-950">
+                Get in touch.
+              </h2>
+              <p class="mt-4 text-base leading-relaxed text-ink-800">
+                If you need a different shot, a quote, an interview or a logo asset for one of my companies, email
+                <a class="link-underline text-ink-950" href="mailto:inbox@jamesmarkey.co.uk">inbox@jamesmarkey.co.uk</a>.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="border-t border-ink-950/10">
+        <div class="container-wide py-12">
+          <a
+            href="/"
+            class="inline-flex items-center gap-2 font-mono text-xs uppercase tracking-[0.18em] text-ink-950 hover:text-accent"
+          >
+            <span aria-hidden="true">←</span>
+            <span>Back to home</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </article>
+</BaseLayout>

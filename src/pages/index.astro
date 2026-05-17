@@ -7,6 +7,9 @@ import PostGrid from '~/components/PostGrid.astro';
 import WorkGrid from '~/components/WorkGrid.astro';
 import InvestmentGrid from '~/components/InvestmentGrid.astro';
 import TravelEmbed from '~/components/TravelEmbed.astro';
+import { pressImages } from '~/data/press';
+
+const pressPreview = pressImages.slice(0, 4);
 
 const posts = (await getCollection('posts', ({ data }) => !data.draft))
   .sort((a, b) => b.data.pubDate.getTime() - a.data.pubDate.getTime());
@@ -135,6 +138,44 @@ const latestPosts = posts.slice(0, 6);
         title="59 countries and counting."
       />
       <TravelEmbed />
+    </div>
+  </section>
+
+  <section id="press" class="section section--light">
+    <div class="container-wide">
+      <div class="flex flex-wrap items-end justify-between gap-6">
+        <SectionHeader
+          number="05"
+          label="Press"
+          title="Free to use, for any purpose."
+          lede="High-resolution photographs of James — no permission needed, no attribution required. For press, editorial, conference decks or anything else."
+        />
+        <a
+          href="/press/"
+          class="font-mono text-xs uppercase tracking-[0.18em] text-ink-950 hover:text-accent"
+        >
+          Open press kit →
+        </a>
+      </div>
+      <div class="grid grid-cols-2 gap-4 md:grid-cols-4">
+        {
+          pressPreview.map((img) => (
+            <a
+              href="/press/"
+              class="group block overflow-hidden rounded-lg border border-ink-950/10 bg-ink-900 transition-colors hover:border-accent"
+              aria-label={`${img.caption} — open press kit`}
+            >
+              <img
+                src={img.src}
+                alt={img.alt}
+                loading="lazy"
+                decoding="async"
+                class="aspect-[3/4] w-full object-cover transition-transform duration-500 group-hover:scale-[1.02]"
+              />
+            </a>
+          ))
+        }
+      </div>
     </div>
   </section>
 </BaseLayout>
