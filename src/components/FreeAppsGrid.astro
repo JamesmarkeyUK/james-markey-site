@@ -1,0 +1,12 @@
+---
+import { freeApps } from '~/data/freeApps';
+import FreeAppCard from './FreeAppCard.astro';
+---
+
+<div class="no-scrollbar flex gap-6 overflow-x-auto snap-x snap-mandatory pb-4 md:grid md:grid-cols-2 md:overflow-visible md:pb-0">
+  {freeApps.map((app) => (
+    <div class="snap-start shrink-0 w-[85vw] md:w-auto">
+      <FreeAppCard app={app} />
+    </div>
+  ))}
+</div>

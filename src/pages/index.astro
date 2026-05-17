@@ -6,6 +6,7 @@ import SectionHeader from '~/components/SectionHeader.astro';
 import PostGrid from '~/components/PostGrid.astro';
 import WorkGrid from '~/components/WorkGrid.astro';
 import InvestmentGrid from '~/components/InvestmentGrid.astro';
+import FreeAppsGrid from '~/components/FreeAppsGrid.astro';
 import TravelEmbed from '~/components/TravelEmbed.astro';
 
 const posts = (await getCollection('posts', ({ data }) => !data.draft))
@@ -126,12 +127,24 @@ const latestPosts = posts.slice(0, 6);
     </div>
   </section>
 
-  <section id="travels" class="section section--dark">
+  <section id="free-apps" class="section section--dark">
     <div class="container-wide">
       <SectionHeader
         number="04"
-        label="Travels"
+        label="Free Apps"
         tone="dark"
+        title="Mental-health tools, free for everyone."
+        lede="Non-profit apps I've built to support people living with bipolar disorder."
+      />
+      <FreeAppsGrid />
+    </div>
+  </section>
+
+  <section id="travels" class="section section--light">
+    <div class="container-wide">
+      <SectionHeader
+        number="05"
+        label="Travels"
         title="59 countries and counting."
       />
       <TravelEmbed />
