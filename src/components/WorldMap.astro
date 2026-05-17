@@ -461,6 +461,7 @@ const basePins = rawBasePins.map((p) => {
 
   const BASE_VB = { x: 0, y: 0, w: 1000, h: 500 };
   const ZOOM_STEP = 0.90;
+  const DOUBLE_TAP_ZOOM_STEP = 0.30;
   const MAX_ZOOM = 8;
   const MIN_ZOOM = 1;
 
@@ -599,10 +600,10 @@ const basePins = rawBasePins.map((p) => {
       const rect = container.getBoundingClientRect();
       const { x: cx, y: cy } = containerToVB(e.clientX - rect.left, e.clientY - rect.top);
       const target = clampVB({
-        x: cx - (vb.w * ZOOM_STEP) / 2,
-        y: cy - (vb.h * ZOOM_STEP) / 2,
-        w: vb.w * ZOOM_STEP,
-        h: vb.h * ZOOM_STEP,
+        x: cx - (vb.w * DOUBLE_TAP_ZOOM_STEP) / 2,
+        y: cy - (vb.h * DOUBLE_TAP_ZOOM_STEP) / 2,
+        w: vb.w * DOUBLE_TAP_ZOOM_STEP,
+        h: vb.h * DOUBLE_TAP_ZOOM_STEP,
       });
       animateTo(target);
     });

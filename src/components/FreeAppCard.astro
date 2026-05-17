@@ -1,0 +1,25 @@
+---
+import type { FreeApp } from '~/data/freeApps';
+
+interface Props {
+  app: FreeApp;
+}
+
+const { app } = Astro.props;
+---
+
+<a
+  href={app.href}
+  target="_blank"
+  rel="noopener noreferrer"
+  class="group flex flex-col gap-6 rounded-lg border border-paper-50/10 bg-ink-900 p-8 transition-colors hover:border-accent"
+>
+  <div class="flex items-start justify-between">
+    <p class="label-eyebrow text-accent">Free · {app.category}</p>
+    <span class="text-accent transition-transform group-hover:translate-x-1">↗</span>
+  </div>
+  <h3 class="font-display text-2xl font-semibold leading-tight text-paper-50">
+    {app.name}
+  </h3>
+  <p class="text-base leading-relaxed text-paper-50/70">{app.description}</p>
+</a>
