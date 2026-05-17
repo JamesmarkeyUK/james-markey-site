@@ -12,14 +12,14 @@ const { app } = Astro.props;
   href={app.href}
   target="_blank"
   rel="noopener noreferrer"
-  class="group flex flex-col gap-6 rounded-lg border border-paper-50/10 bg-ink-900 p-8 transition-colors hover:border-accent"
+  class="group flex flex-col gap-4 rounded-lg border border-ink-950/10 bg-paper-50 p-8 transition-colors hover:border-accent"
 >
   <div class="flex items-start justify-between">
-    <p class="label-eyebrow text-accent">Free · {app.category}</p>
-    <span class="text-accent transition-transform group-hover:translate-x-1">↗</span>
+    <p class="label-eyebrow text-muted-500">Free · {app.category}</p>
+    <span class="text-ink-950/40 transition-all group-hover:translate-x-1 group-hover:text-accent">↗</span>
   </div>
-  <h3 class="font-display text-2xl font-semibold leading-tight text-paper-50">
+  <h3 class="font-display text-2xl font-semibold leading-tight text-ink-950">
     {app.name}
   </h3>
-  <p class="text-base leading-relaxed text-paper-50/70">{app.description}</p>
+  <p class="text-base leading-relaxed text-ink-800">{app.description}</p>
 </a>
