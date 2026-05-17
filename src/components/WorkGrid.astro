@@ -5,7 +5,7 @@ import WorkCard from './WorkCard.astro';
 
 <div data-swipe-hint class="no-scrollbar flex gap-6 overflow-x-auto snap-x snap-mandatory pb-4 md:grid md:grid-cols-3 md:overflow-visible md:pb-0">
   {work.map((role) => (
-    <div class={`snap-start shrink-0 w-[85vw] md:w-auto${role.featured ? ' order-first md:order-none' : ''}`}>
+    <div class={`snap-start shrink-0 w-[78vw] md:w-auto${role.featured ? ' order-first md:order-none' : ''}`}>
       <WorkCard role={role} />
     </div>
   ))}

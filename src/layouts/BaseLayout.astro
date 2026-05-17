@@ -66,10 +66,17 @@ const {
           if (el.dataset.hinted) return;
           if (el.scrollWidth <= el.clientWidth + 4) return;
           el.dataset.hinted = 'true';
+          // Firefox cancels smooth scrolls when scroll-snap-type is mandatory,
+          // so temporarily relax it for the duration of the nudge.
+          const prevSnap = el.style.scrollSnapType;
+          el.style.scrollSnapType = 'none';
           el.scrollTo({ left: 56, behavior: 'smooth' });
           window.setTimeout(() => {
             el.scrollTo({ left: 0, behavior: 'smooth' });
-          }, 650);
+            window.setTimeout(() => {
+              el.style.scrollSnapType = prevSnap;
+            }, 700);
+          }, 600);
         };
 
         const observer = new IntersectionObserver(
