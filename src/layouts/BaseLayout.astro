@@ -55,5 +55,37 @@ const {
       <slot />
     </main>
     <Footer />
+    <script>
+      (() => {
+        const hints = document.querySelectorAll<HTMLElement>('[data-swipe-hint]');
+        if (!hints.length) return;
+        if (window.matchMedia('(min-width: 768px)').matches) return;
+        if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+        const nudge = (el: HTMLElement) => {
+          if (el.dataset.hinted) return;
+          if (el.scrollWidth <= el.clientWidth + 4) return;
+          el.dataset.hinted = 'true';
+          el.scrollTo({ left: 56, behavior: 'smooth' });
+          window.setTimeout(() => {
+            el.scrollTo({ left: 0, behavior: 'smooth' });
+          }, 650);
+        };
+
+        const observer = new IntersectionObserver(
+          (entries) => {
+            for (const entry of entries) {
+              if (entry.isIntersecting) {
+                nudge(entry.target as HTMLElement);
+                observer.unobserve(entry.target);
+              }
+            }
+          },
+          { threshold: 0.4 }
+        );
+
+        hints.forEach((el) => observer.observe(el));
+      })();
+    </script>
   </body>
 </html>
