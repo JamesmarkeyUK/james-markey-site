@@ -12,7 +12,7 @@ const { posts, tone = 'light' } = Astro.props;
 
 <div data-swipe-hint class="no-scrollbar flex gap-8 overflow-x-auto snap-x snap-mandatory pb-4">
   {posts.map((post) => (
-    <div class="snap-start shrink-0 w-[85vw] sm:w-[45vw] lg:w-[30vw] xl:w-[24rem]">
+    <div class="snap-start shrink-0 w-[78vw] sm:w-[45vw] lg:w-[30vw] xl:w-[24rem]">
       <PostCard post={post} tone={tone} />
     </div>
   ))}
