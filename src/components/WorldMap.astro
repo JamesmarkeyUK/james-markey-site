@@ -65,6 +65,7 @@ const basePins = rawBasePins.map((p) => {
 });
 ---
 
+<div data-fullscreen-root class="fullscreen-root">
 <div class="world-map-wrapper space-y-3" data-world-map>
   <!-- Continent filter chips -->
   <div class="flex flex-wrap gap-2" data-continent-filters>
@@ -218,6 +219,15 @@ const basePins = rawBasePins.map((p) => {
 
     <!-- Zoom controls -->
     <div class="zoom-controls absolute bottom-2 right-2 flex flex-col gap-1">
+      <!-- Fullscreen toggle — mobile only -->
+      <button type="button" class="zoom-btn sm:hidden" data-fullscreen-btn aria-label="Enter fullscreen">
+        <svg class="fullscreen-icon-expand" width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M1 5V1h4M9 1h4v4M13 9v4H9M5 13H1V9" />
+        </svg>
+        <svg class="fullscreen-icon-compress" width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none">
+          <path d="M5 1v4H1M9 1v4h4M9 13v-4h4M5 13v-4H1" />
+        </svg>
+      </button>
       <button type="button" class="zoom-btn" data-zoom="in" aria-label="Zoom in">
         <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
           <path d="M7 2v10M2 7h10" />
@@ -304,6 +314,7 @@ const basePins = rawBasePins.map((p) => {
     </dl>
   </div>
 </div>
+</div>
 
 <style>
   /* Continent chips */
@@ -357,6 +368,36 @@ const basePins = rawBasePins.map((p) => {
   .zoom-btn:hover {
     color: #F5A524;
     background: rgba(10, 10, 11, 0.9);
+  }
+
+  /* Fullscreen root */
+  .fullscreen-root {
+    display: contents;
+  }
+
+  /* Map in fullscreen mode */
+  :fullscreen .map-container,
+  :-webkit-full-screen .map-container {
+    aspect-ratio: unset !important;
+    width: 100%;
+    height: 100%;
+    border-radius: 0 !important;
+    border: none !important;
+  }
+  :fullscreen .world-map-wrapper,
+  :-webkit-full-screen .world-map-wrapper {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+  :fullscreen,
+  :-webkit-full-screen {
+    background: #0a0a0b;
+  }
+  :fullscreen .flex.flex-wrap.gap-2,
+  :-webkit-full-screen .flex.flex-wrap.gap-2 {
+    display: none;
   }
 
   /* Detail panel — fixed positioned, above everything */
@@ -678,6 +719,34 @@ const basePins = rawBasePins.map((p) => {
       });
     });
 
+    // ── Fullscreen (mobile) ────────────────────────────────────────
+    const fullscreenRoot = root.closest('[data-fullscreen-root]');
+    const fullscreenBtn = root.querySelector('[data-fullscreen-btn]');
+    const iconExpand = fullscreenBtn?.querySelector('.fullscreen-icon-expand');
+    const iconCompress = fullscreenBtn?.querySelector('.fullscreen-icon-compress');
+
+    function updateFullscreenIcon() {
+      const isFs = !!document.fullscreenElement;
+      if (iconExpand) iconExpand.style.display = isFs ? 'none' : '';
+      if (iconCompress) iconCompress.style.display = isFs ? '' : 'none';
+      if (fullscreenBtn) fullscreenBtn.setAttribute('aria-label', isFs ? 'Exit fullscreen' : 'Enter fullscreen');
+    }
+
+    fullscreenBtn?.addEventListener('click', () => {
+      if (!document.fullscreenElement) {
+        (fullscreenRoot || container).requestFullscreen().then(() => {
+          try { screen.orientation.lock('landscape').catch(() => {}); } catch (_) {}
+        }).catch(() => {});
+      } else {
+        document.exitFullscreen().catch(() => {});
+      }
+    });
+
+    document.addEventListener('fullscreenchange', () => {
+      updateFullscreenIcon();
+      if (activeId) positionPanel();
+    });
+
     // ── Continent filter chips ─────────────────────────────────────
     let activeContinent = 'all';
 
@@ -714,7 +783,9 @@ const basePins = rawBasePins.map((p) => {
 
     function positionPanel() {
       const rect = container.getBoundingClientRect();
-      const isMobile = window.innerWidth < 640;
+      const isFs = !!document.fullscreenElement;
+      // In fullscreen landscape, treat as desktop (side panel). Otherwise mobile = bottom sheet.
+      const isMobile = !isFs && window.innerWidth < 640;
       if (isMobile) {
         Object.assign(panel.style, {
           left: '0', right: '0', bottom: '0', top: 'auto',
