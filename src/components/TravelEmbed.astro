@@ -1,12 +1,18 @@
 ---
 import { site } from '~/data/site';
+import { getCountryPins } from '~/data/travels';
 import WorldMap from '~/components/WorldMap.astro';
+
+// Derive the headline count from the same live feed the map uses, so the two
+// can never drift apart. Falls back to the static count if the feed is empty.
+const pins = await getCountryPins();
+const countryCount = pins.length || site.countryCount;
 ---
 
 <div class="grid gap-12 lg:grid-cols-[1fr_1.4fr] lg:items-center">
   <div>
     <p class="font-display text-5xl font-semibold leading-tight text-paper-50 md:text-6xl">
-      {site.countryCount}<span class="text-accent">.</span>
+      {countryCount}<span class="text-accent">.</span>
     </p>
     <p class="mt-4 text-xl text-paper-50/70">
       Countries and counting — come say <em>hey</em> while I'm travelling.

@@ -1,6 +1,7 @@
 ---
 import { getCountryPins } from '~/data/travels';
 import { CONTINENTS, CONTINENT_VIEWBOXES, type Continent } from '~/data/continents';
+import { countryShapes } from '~/data/countryShapes';
 
 const VIEW_W = 1000;
 const VIEW_H = 500;
@@ -21,6 +22,9 @@ const pins = rawPins.map((p) => {
     y: y + (p.pinOffsetY ?? 0),
   };
 });
+
+// Visited country codes — used to highlight their dots on the base map.
+const visitedCodes = new Set(pins.map((p) => p.countryCode));
 
 // Count visited countries per continent
 const continentCounts: Record<string, number> = {};
@@ -104,60 +108,25 @@ const basePins = rawBasePins.map((p) => {
       data-svg
     >
       <defs>
+        <!-- Dim dots for unvisited land -->
         <pattern id="land-dots" width="9" height="9" patternUnits="userSpaceOnUse">
-          <circle cx="4.5" cy="4.5" r="1.25" fill="currentColor" />
+          <circle cx="4.5" cy="4.5" r="1.15" fill="#FAFAF7" fill-opacity="0.26" />
         </pattern>
-        <!-- Soft radial fill used to gently colour in each visited country -->
-        <radialGradient id="visited-glow">
-          <stop offset="0%" stop-color="#4ade80" stop-opacity="0.6" />
-          <stop offset="55%" stop-color="#4ade80" stop-opacity="0.24" />
-          <stop offset="100%" stop-color="#4ade80" stop-opacity="0" />
-        </radialGradient>
+        <!-- Bright dots that softly colour in each visited country -->
+        <pattern id="land-dots-visited" width="9" height="9" patternUnits="userSpaceOnUse">
+          <circle cx="4.5" cy="4.5" r="1.6" fill="#FFFFFF" fill-opacity="0.95" />
+        </pattern>
       </defs>
 
-      <g class="text-paper-50/45">
-        <!-- North America -->
-        <path d="M 30,105 C 80,90 140,80 210,82 C 270,84 310,95 335,120 C 345,150 330,180 305,200 C 285,220 260,245 235,265 C 215,278 195,278 175,265 C 150,240 135,210 120,185 C 100,165 80,150 60,135 C 45,125 35,115 30,105 Z" fill="url(#land-dots)" />
-        <!-- Greenland -->
-        <path d="M 378,32 C 410,25 445,30 460,55 C 467,72 458,85 438,86 C 412,86 388,80 375,68 C 370,55 372,42 378,32 Z" fill="url(#land-dots)" />
-        <!-- Central America bridge -->
-        <path d="M 230,215 C 250,222 265,232 278,245 C 285,255 282,265 270,265 C 255,260 240,245 228,228 Z" fill="url(#land-dots)" />
-        <!-- South America -->
-        <path d="M 282,222 C 320,218 360,232 380,272 C 395,308 396,352 386,398 C 372,438 342,460 318,455 C 292,445 280,420 277,385 C 272,355 270,322 272,288 C 274,258 277,235 282,222 Z" fill="url(#land-dots)" />
-        <!-- UK / Ireland -->
-        <path d="M 448,108 C 458,103 470,108 472,122 C 470,135 460,140 450,135 C 442,128 442,115 448,108 Z" fill="url(#land-dots)" />
-        <!-- Europe -->
-        <path d="M 470,95 C 510,82 565,82 605,92 C 625,108 620,135 600,155 C 575,168 540,170 510,165 C 485,155 470,138 465,118 C 465,108 467,100 470,95 Z" fill="url(#land-dots)" />
-        <!-- Africa -->
-        <path d="M 478,168 C 525,165 580,172 615,190 C 640,215 645,250 635,288 C 622,325 605,360 585,392 C 572,415 553,425 535,418 C 512,408 498,382 492,355 C 483,322 480,288 480,255 C 480,222 478,195 478,168 Z" fill="url(#land-dots)" />
-        <!-- Arabian Peninsula -->
-        <path d="M 605,178 C 635,178 660,195 668,222 C 660,245 632,250 610,240 C 598,222 598,200 605,178 Z" fill="url(#land-dots)" />
-        <!-- Sinai + Levant -->
-        <path d="M 578,150 L 615,148 L 620,168 L 608,182 L 585,180 Z" fill="url(#land-dots)" />
-        <!-- Asia (main) -->
-        <path d="M 605,80 C 670,72 745,72 815,80 C 870,88 910,105 925,130 C 928,155 905,175 875,185 C 845,195 810,200 780,210 C 755,220 730,232 705,238 C 680,242 655,240 635,225 C 615,210 600,190 595,165 C 593,135 595,108 605,80 Z" fill="url(#land-dots)" />
-        <!-- India peninsula -->
-        <path d="M 685,215 C 710,218 728,230 732,252 C 728,272 710,280 695,278 C 680,272 672,255 672,240 C 675,225 680,218 685,215 Z" fill="url(#land-dots)" />
-        <!-- SE Asia / Indonesia -->
-        <ellipse cx="830" cy="265" rx="22" ry="9" fill="url(#land-dots)" />
-        <ellipse cx="868" cy="278" rx="18" ry="7" fill="url(#land-dots)" />
-        <ellipse cx="800" cy="248" rx="14" ry="6" fill="url(#land-dots)" />
-        <!-- Japan -->
-        <path d="M 892,150 C 905,145 915,158 912,175 C 908,188 898,188 892,180 C 888,170 888,158 892,150 Z" fill="url(#land-dots)" />
-        <!-- Philippines -->
-        <ellipse cx="855" cy="225" rx="9" ry="14" fill="url(#land-dots)" />
-        <!-- Australia -->
-        <path d="M 812,308 C 838,300 880,300 912,310 C 928,322 932,340 920,358 C 902,375 875,382 850,382 C 825,380 805,370 800,352 C 798,332 803,318 812,308 Z" fill="url(#land-dots)" />
-        <!-- New Zealand -->
-        <path d="M 932,365 L 944,370 L 944,388 L 935,392 Z" fill="url(#land-dots)" />
-        <!-- Antarctica strip -->
-        <path d="M 0,458 L 1000,458 L 1000,495 L 0,495 Z" fill="url(#land-dots)" />
-        <!-- Alaska -->
-        <path d="M 25,105 L 75,95 L 90,118 L 65,128 L 35,122 Z" fill="url(#land-dots)" />
-        <!-- Iceland -->
-        <ellipse cx="430" cy="98" rx="12" ry="6" fill="url(#land-dots)" />
-        <!-- Madagascar -->
-        <ellipse cx="645" cy="335" rx="6" ry="16" fill="url(#land-dots)" />
+      <!-- Dotted-geography base map. Visited countries get bright dots so
+           their boundaries read without drawing any outline. -->
+      <g class="land">
+        {countryShapes.map((s) => (
+          <path
+            d={s.d}
+            fill={visitedCodes.has(s.code) ? 'url(#land-dots-visited)' : 'url(#land-dots)'}
+          />
+        ))}
       </g>
 
       <g class="pins">
@@ -184,7 +153,6 @@ const basePins = rawBasePins.map((p) => {
               role="button"
               aria-label={`${pin.country} — click for details`}
             >
-              <circle class="country-fill" r="16" fill="url(#visited-glow)" />
               <circle class="pin-halo" r="11" />
               <circle class="pin-ring" r="6" />
               <circle class="pin-dot" r="3" />
@@ -490,16 +458,6 @@ const basePins = rawBasePins.map((p) => {
   .base-pin:focus-visible .base-ring { opacity: 1; stroke-width: 2; }
   .base-pin.is-active .base-halo { opacity: 0.28; }
   .base-pin.is-active .base-ring { opacity: 1; stroke-width: 2.5; }
-
-  /* Visited-country soft fill — gently colours in each visited country */
-  .pin .country-fill {
-    opacity: 0.85;
-    transition: opacity 220ms ease;
-    pointer-events: none;
-  }
-  .pin:hover .country-fill,
-  .pin:focus-visible .country-fill,
-  .pin.is-active .country-fill { opacity: 1; }
 
   /* Visited-country count overlay */
   .map-count {

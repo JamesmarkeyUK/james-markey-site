@@ -5,7 +5,8 @@ export const site = {
   description:
     'Personal site of James Markey: founder of UNI SIM, Commercial Director of HRV Simulation, UK Export Champion for the Department for Business and Trade, and mental-health advocate.',
   tagline: 'Founder, exporter, traveller — building tools at the cutting edge of technology.',
-  countryCount: 59,
+  // Fallback only — the live count is derived from the nomads feed at build time.
+  countryCount: 57,
   nomadlistUsername: 'jamesmarkey',
   nomadlistUrl: 'https://nomadlist.com/@jamesmarkey',
   managerAbroadUrl: 'https://themanagerabroad.co.uk',
