@@ -107,6 +107,12 @@ const basePins = rawBasePins.map((p) => {
         <pattern id="land-dots" width="9" height="9" patternUnits="userSpaceOnUse">
           <circle cx="4.5" cy="4.5" r="1.25" fill="currentColor" />
         </pattern>
+        <!-- Soft radial fill used to gently colour in each visited country -->
+        <radialGradient id="visited-glow">
+          <stop offset="0%" stop-color="#4ade80" stop-opacity="0.6" />
+          <stop offset="55%" stop-color="#4ade80" stop-opacity="0.24" />
+          <stop offset="100%" stop-color="#4ade80" stop-opacity="0" />
+        </radialGradient>
       </defs>
 
       <g class="text-paper-50/45">
@@ -178,6 +184,7 @@ const basePins = rawBasePins.map((p) => {
               role="button"
               aria-label={`${pin.country} — click for details`}
             >
+              <circle class="country-fill" r="16" fill="url(#visited-glow)" />
               <circle class="pin-halo" r="11" />
               <circle class="pin-ring" r="6" />
               <circle class="pin-dot" r="3" />
@@ -216,6 +223,15 @@ const basePins = rawBasePins.map((p) => {
         ))}
       </g>
     </svg>
+
+    <!-- Visited-country count, superimposed on the map overview -->
+    <div class="map-count" aria-hidden="true">
+      <span class="map-count-num">{pins.length}.</span>
+      <span class="map-count-label">countries visited</span>
+    </div>
+
+    <!-- A discreet hello, world -->
+    <span class="hello-world" aria-hidden="true">hello, world</span>
 
     <!-- Zoom controls -->
     <div class="zoom-controls absolute bottom-2 right-2 flex flex-col gap-1">
@@ -400,6 +416,37 @@ const basePins = rawBasePins.map((p) => {
     display: none;
   }
 
+  /* Pseudo-fullscreen fallback — used when the native Fullscreen API isn't
+     available (mobile Safari) or is rejected. Mirrors the native styling. */
+  :global(html.map-fs-lock),
+  :global(html.map-fs-lock body) {
+    overflow: hidden;
+  }
+  .fullscreen-root.is-pseudo-fs {
+    display: block;
+    position: fixed;
+    inset: 0;
+    z-index: 9998;
+    background: #0a0a0b;
+  }
+  .fullscreen-root.is-pseudo-fs .world-map-wrapper {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+  .fullscreen-root.is-pseudo-fs .map-container {
+    flex: 1;
+    aspect-ratio: unset !important;
+    width: 100%;
+    height: 100%;
+    border-radius: 0 !important;
+    border: none !important;
+  }
+  .fullscreen-root.is-pseudo-fs .flex.flex-wrap.gap-2 {
+    display: none;
+  }
+
   /* Detail panel — fixed positioned, above everything */
   .detail-panel {
     display: none;
@@ -443,6 +490,56 @@ const basePins = rawBasePins.map((p) => {
   .base-pin:focus-visible .base-ring { opacity: 1; stroke-width: 2; }
   .base-pin.is-active .base-halo { opacity: 0.28; }
   .base-pin.is-active .base-ring { opacity: 1; stroke-width: 2.5; }
+
+  /* Visited-country soft fill — gently colours in each visited country */
+  .pin .country-fill {
+    opacity: 0.85;
+    transition: opacity 220ms ease;
+    pointer-events: none;
+  }
+  .pin:hover .country-fill,
+  .pin:focus-visible .country-fill,
+  .pin.is-active .country-fill { opacity: 1; }
+
+  /* Visited-country count overlay */
+  .map-count {
+    position: absolute;
+    top: 0.6rem;
+    left: 0.75rem;
+    display: flex;
+    flex-direction: column;
+    line-height: 1;
+    pointer-events: none;
+    user-select: none;
+  }
+  .map-count-num {
+    font-family: ui-monospace, monospace;
+    font-size: 2rem;
+    font-weight: 600;
+    color: rgba(250, 250, 247, 0.85);
+    letter-spacing: -0.02em;
+  }
+  .map-count-label {
+    margin-top: 0.2rem;
+    font-family: ui-monospace, monospace;
+    font-size: 0.55rem;
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    color: rgba(250, 250, 247, 0.4);
+  }
+
+  /* Discreet hello, world */
+  .hello-world {
+    position: absolute;
+    bottom: 0.45rem;
+    left: 0.75rem;
+    font-family: ui-monospace, monospace;
+    font-size: 0.55rem;
+    letter-spacing: 0.1em;
+    color: rgba(250, 250, 247, 0.22);
+    pointer-events: none;
+    user-select: none;
+  }
 
   /* Travel pins */
   .pin { outline: none; }
@@ -724,27 +821,59 @@ const basePins = rawBasePins.map((p) => {
     const fullscreenBtn = root.querySelector('[data-fullscreen-btn]');
     const iconExpand = fullscreenBtn?.querySelector('.fullscreen-icon-expand');
     const iconCompress = fullscreenBtn?.querySelector('.fullscreen-icon-compress');
+    const fsTarget = fullscreenRoot || container;
+
+    function isFullscreen() {
+      return !!document.fullscreenElement || fsTarget.classList.contains('is-pseudo-fs');
+    }
 
     function updateFullscreenIcon() {
-      const isFs = !!document.fullscreenElement;
+      const isFs = isFullscreen();
       if (iconExpand) iconExpand.style.display = isFs ? 'none' : '';
       if (iconCompress) iconCompress.style.display = isFs ? '' : 'none';
       if (fullscreenBtn) fullscreenBtn.setAttribute('aria-label', isFs ? 'Exit fullscreen' : 'Enter fullscreen');
     }
 
+    // CSS-based fallback for browsers that don't support the Fullscreen API on
+    // elements (notably iOS Safari) or reject it (e.g. display:contents roots).
+    function enterPseudoFullscreen() {
+      fsTarget.classList.add('is-pseudo-fs');
+      document.documentElement.classList.add('map-fs-lock');
+      updateFullscreenIcon();
+      if (activeId) positionPanel();
+    }
+    function exitPseudoFullscreen() {
+      fsTarget.classList.remove('is-pseudo-fs');
+      document.documentElement.classList.remove('map-fs-lock');
+      updateFullscreenIcon();
+      if (activeId) positionPanel();
+    }
+
     fullscreenBtn?.addEventListener('click', () => {
-      if (!document.fullscreenElement) {
-        (fullscreenRoot || container).requestFullscreen().then(() => {
+      if (isFullscreen()) {
+        if (document.fullscreenElement) document.exitFullscreen().catch(() => {});
+        else exitPseudoFullscreen();
+        return;
+      }
+      // Prefer the native Fullscreen API; fall back to pseudo-fullscreen when
+      // it's unavailable or the request is rejected.
+      const req = fsTarget.requestFullscreen;
+      if (typeof req === 'function') {
+        req.call(fsTarget).then(() => {
           try { screen.orientation.lock('landscape').catch(() => {}); } catch (_) {}
-        }).catch(() => {});
+        }).catch(() => { enterPseudoFullscreen(); });
       } else {
-        document.exitFullscreen().catch(() => {});
+        enterPseudoFullscreen();
       }
     });
 
     document.addEventListener('fullscreenchange', () => {
       updateFullscreenIcon();
       if (activeId) positionPanel();
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && fsTarget.classList.contains('is-pseudo-fs')) exitPseudoFullscreen();
     });
 
     // ── Continent filter chips ─────────────────────────────────────
