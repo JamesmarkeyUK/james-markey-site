@@ -9,8 +9,14 @@ import InvestmentGrid from '~/components/InvestmentGrid.astro';
 import FreeAppsGrid from '~/components/FreeAppsGrid.astro';
 import TravelEmbed from '~/components/TravelEmbed.astro';
 import { pressImages } from '~/data/press';
+import { getCountryPins } from '~/data/travels';
+import { site } from '~/data/site';
 
 const pressPreview = pressImages.slice(0, 4);
+
+// Derive the count from the same live feed the map and TravelEmbed use, so the
+// headline, bio and quick-facts figures can never drift apart again.
+const countryCount = (await getCountryPins()).length || site.countryCount;
 
 const posts = (await getCollection('posts', ({ data }) => !data.draft))
   .sort((a, b) => b.data.pubDate.getTime() - a.data.pubDate.getTime());
@@ -38,7 +44,7 @@ const latestPosts = posts.slice(0, 6);
             I live with bipolar disorder and founded <a class="link-underline text-paper-50" href="https://bipolarbear.app" target="_blank" rel="noopener noreferrer">Bipolar Bear</a> — a non-profit app supporting people living with the same condition. The story has been covered in <em>The Times</em>, on BBC Radio 5 Live, and by the UK government.
           </p>
           <p>
-            Outside the day job I'm a motorbike enthusiast, clay-pigeon shooter at Bisley, and I've visited 59 countries and counting. Most of my travel writing lives at <a class="link-underline text-paper-50" href="https://themanagerabroad.co.uk" target="_blank" rel="noopener noreferrer">The Manager Abroad</a>.
+            Outside the day job I'm a motorbike enthusiast, clay-pigeon shooter at Bisley, and I've visited {countryCount} countries and counting. Most of my travel writing lives at <a class="link-underline text-paper-50" href="https://themanagerabroad.co.uk" target="_blank" rel="noopener noreferrer">The Manager Abroad</a>.
           </p>
         </div>
         <div class="space-y-8">
@@ -59,7 +65,7 @@ const latestPosts = posts.slice(0, 6);
               </div>
               <div class="flex justify-between gap-4">
                 <dt class="text-paper-50/60">Countries</dt>
-                <dd class="text-paper-50">59 & counting</dd>
+                <dd class="text-paper-50">{countryCount} & counting</dd>
               </div>
             </dl>
           </div>
@@ -148,7 +154,7 @@ const latestPosts = posts.slice(0, 6);
         number="05"
         label="Travels"
         tone="dark"
-        title="59 countries and counting."
+        title={`${countryCount} countries and counting.`}
       />
       <TravelEmbed />
     </div>
