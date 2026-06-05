@@ -174,7 +174,16 @@ function buildFallbackPins(): CountryPin[] {
   });
 }
 
-export async function getCountryPins(): Promise<CountryPin[]> {
+let pinsPromise: Promise<CountryPin[]> | null = null;
+
+// Memoised so multiple components (the map and the headline count) share a
+// single fetch and therefore always display a consistent country count.
+export function getCountryPins(): Promise<CountryPin[]> {
+  if (!pinsPromise) pinsPromise = buildCountryPins();
+  return pinsPromise;
+}
+
+async function buildCountryPins(): Promise<CountryPin[]> {
   const trips = await fetchNomadsTrips();
   if (trips.length === 0) return buildFallbackPins();
 
