@@ -127,7 +127,8 @@ const backgroundSvg = `
 // ---------------------------------------------------------------------------
 // Layer 2 — the portrait, faded into the background on the right.
 // ---------------------------------------------------------------------------
-const PORTRAIT_W = 600; // render width; final placement/clip handled below
+const PORTRAIT_W = 520; // narrower + right-anchored so the subject sits right
+const PORTRAIT_X = W - PORTRAIT_W; // 680
 
 // The alpha mask is the product of two gradients: a horizontal one that lets
 // the studio-blue creep in very gradually (eased/convex, so black→portrait is
@@ -145,13 +146,12 @@ const gradMask = (gradient) =>
 const hMask = gradMask(`
   <linearGradient id="g" x1="0" y1="0" x2="1" y2="0">
     <stop offset="0%" stop-color="#fff" stop-opacity="0" />
-    <stop offset="12%" stop-color="#fff" stop-opacity="0" />
-    <stop offset="30%" stop-color="#fff" stop-opacity="0.07" />
-    <stop offset="46%" stop-color="#fff" stop-opacity="0.18" />
-    <stop offset="60%" stop-color="#fff" stop-opacity="0.36" />
-    <stop offset="72%" stop-color="#fff" stop-opacity="0.56" />
-    <stop offset="83%" stop-color="#fff" stop-opacity="0.78" />
-    <stop offset="92%" stop-color="#fff" stop-opacity="0.94" />
+    <stop offset="6%" stop-color="#fff" stop-opacity="0" />
+    <stop offset="16%" stop-color="#fff" stop-opacity="0.12" />
+    <stop offset="26%" stop-color="#fff" stop-opacity="0.34" />
+    <stop offset="35%" stop-color="#fff" stop-opacity="0.6" />
+    <stop offset="42%" stop-color="#fff" stop-opacity="0.85" />
+    <stop offset="48%" stop-color="#fff" stop-opacity="1" />
     <stop offset="100%" stop-color="#fff" stop-opacity="1" />
   </linearGradient>`);
 
@@ -170,29 +170,23 @@ const maskAlpha = await sharp(hMask)
   .raw()
   .toBuffer();
 
+// Keep this as 3-channel RGB (no alpha) so joinChannel can supply the mask as
+// the alpha channel — calling ensureAlpha first would make joinChannel append
+// a 5th channel and the gradient would be silently dropped.
 const portraitBase = await sharp(path.join(root, 'src/assets/portrait.jpg'))
   .resize(PORTRAIT_W, H, { fit: 'cover', position: 'top' })
   // Mute it so it reads as a faded backdrop rather than a hero shot.
   .modulate({ saturation: 0.8, brightness: 0.97 })
   .toColourspace('srgb')
-  .ensureAlpha()
+  .removeAlpha()
   .raw()
   .toBuffer();
 
 // Apply the gradient as the alpha channel.
-const fadedPortrait = await sharp(portraitBase, {
-  raw: { width: PORTRAIT_W, height: H, channels: 4 },
+const portraitFinal = await sharp(portraitBase, {
+  raw: { width: PORTRAIT_W, height: H, channels: 3 },
 })
   .joinChannel(maskAlpha, { raw: { width: PORTRAIT_W, height: H, channels: 1 } })
-  .png()
-  .toBuffer();
-
-// Push the subject further right by placing the box past the right edge and
-// keeping only the part that lands on the canvas (the far edge is clipped).
-const PORTRAIT_PLACE_X = 720;
-const portraitVisibleW = W - PORTRAIT_PLACE_X; // 480
-const portraitFinal = await sharp(fadedPortrait)
-  .extract({ left: 0, top: 0, width: portraitVisibleW, height: H })
   .png()
   .toBuffer();
 
@@ -274,7 +268,7 @@ const outPath = path.join(root, 'public/og-default.jpg');
 
 await sharp(Buffer.from(backgroundSvg))
   .composite([
-    { input: portraitFinal, left: PORTRAIT_PLACE_X, top: 0 },
+    { input: portraitFinal, left: PORTRAIT_X, top: 0 },
     { input: Buffer.from(foregroundSvg), left: 0, top: 0 },
   ])
   .jpeg({ quality: 88, mozjpeg: true })
