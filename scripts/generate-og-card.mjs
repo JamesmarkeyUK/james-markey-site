@@ -137,8 +137,8 @@ const portraitMask = Buffer.from(`
   <defs>
     <linearGradient id="h" x1="0" y1="0" x2="1" y2="0">
       <stop offset="0%" stop-color="#fff" stop-opacity="0" />
-      <stop offset="34%" stop-color="#fff" stop-opacity="0" />
-      <stop offset="72%" stop-color="#fff" stop-opacity="1" />
+      <stop offset="8%" stop-color="#fff" stop-opacity="0" />
+      <stop offset="92%" stop-color="#fff" stop-opacity="1" />
       <stop offset="100%" stop-color="#fff" stop-opacity="1" />
     </linearGradient>
     <linearGradient id="v" x1="0" y1="0" x2="0" y2="1">
@@ -179,7 +179,25 @@ const fadedPortrait = await sharp(portraitBase, {
 // ---------------------------------------------------------------------------
 // Layer 3 — foreground: contrast scrim on the left + all the type.
 // ---------------------------------------------------------------------------
-const stat = `${countryCount} countries · 6 continents`;
+const statText = `${countryCount} countries · all 7 continents and counting`;
+
+// Measure rendered text width so the chip background always wraps the full
+// string (librsvg has no text-layout API, so trim a probe render instead).
+async function measureTextWidth(text, { family, weight, size }) {
+  const probe = `<svg xmlns="http://www.w3.org/2000/svg" width="2400" height="160">
+    <rect width="2400" height="160" fill="#000" />
+    <text x="20" y="100" font-family="${family}" font-weight="${weight}" font-size="${size}" fill="#fff">${text}</text>
+  </svg>`;
+  const { info } = await sharp(Buffer.from(probe)).trim({ threshold: 10 }).toBuffer({ resolveWithObject: true });
+  return info.width;
+}
+
+const CHIP_FONT = 24;
+const chipTextW = await measureTextWidth(statText, { family: 'Inter', weight: 600, size: CHIP_FONT });
+const CHIP_DOT_CX = 34;
+const CHIP_TEXT_X = 58;
+const CHIP_W = Math.round(CHIP_TEXT_X + chipTextW + 30);
+const CHIP_H = 52;
 
 const foregroundSvg = `
 <svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}">
@@ -219,13 +237,13 @@ const foregroundSvg = `
           fill="#9CA3AF">Building tools at the cutting edge of technology.</text>
   </g>
 
-  <!-- travel stat chip -->
+  <!-- travel stat chip (width fits the full string) -->
   <g transform="translate(80 470)">
-    <rect x="0" y="0" rx="26" ry="26" width="430" height="52"
+    <rect x="0" y="0" rx="${CHIP_H / 2}" ry="${CHIP_H / 2}" width="${CHIP_W}" height="${CHIP_H}"
           fill="#F5A524" fill-opacity="0.12" stroke="#F5A524" stroke-opacity="0.55" stroke-width="1.5" />
-    <circle cx="34" cy="26" r="7" fill="#F5A524" />
-    <text x="58" y="34" font-family="Inter" font-weight="600" font-size="24"
-          fill="#FAFAF7">${stat} and counting</text>
+    <circle cx="${CHIP_DOT_CX}" cy="${CHIP_H / 2}" r="7" fill="#F5A524" />
+    <text x="${CHIP_TEXT_X}" y="${CHIP_H / 2 + 8}" font-family="Inter" font-weight="600" font-size="${CHIP_FONT}"
+          fill="#FAFAF7">${statText}</text>
   </g>
 </svg>`;
 
