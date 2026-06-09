@@ -11,6 +11,7 @@
     "build": "astro check && astro build",
     "preview": "npm run build && wrangler dev",
     "typecheck": "astro check",
+    "og": "node scripts/generate-og-card.mjs",
     "format": "prettier --write .",
     "migrate": "tsx scripts/migrate/index.ts",
     "deploy": "npm run build && wrangler deploy",
