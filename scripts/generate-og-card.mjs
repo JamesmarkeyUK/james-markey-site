@@ -127,34 +127,46 @@ const backgroundSvg = `
 // ---------------------------------------------------------------------------
 // Layer 2 — the portrait, faded into the background on the right.
 // ---------------------------------------------------------------------------
-const PORTRAIT_W = 560;
-const PORTRAIT_X = W - PORTRAIT_W; // 640
+const PORTRAIT_W = 600;
+const PORTRAIT_X = W - PORTRAIT_W; // 600 — right-anchored, sits to the right
 
-// Left-to-right alpha ramp: transparent where it meets the text, solid at the
-// right edge — so the photo dissolves into the dark canvas.
-const portraitMask = Buffer.from(`
+// The alpha mask is the product of two gradients: a horizontal one that lets
+// the studio-blue creep in very gradually (eased/convex, so black→portrait is
+// soft like the site's mask) and a vertical one that softens the top/bottom
+// edges. librsvg ignores `mix-blend-mode`, so the two are rendered separately
+// and multiplied in sharp to guarantee the horizontal fade is preserved.
+const gradMask = (gradient) =>
+  Buffer.from(`
 <svg xmlns="http://www.w3.org/2000/svg" width="${PORTRAIT_W}" height="${H}">
-  <defs>
-    <linearGradient id="h" x1="0" y1="0" x2="1" y2="0">
-      <stop offset="0%" stop-color="#fff" stop-opacity="0" />
-      <stop offset="8%" stop-color="#fff" stop-opacity="0" />
-      <stop offset="92%" stop-color="#fff" stop-opacity="1" />
-      <stop offset="100%" stop-color="#fff" stop-opacity="1" />
-    </linearGradient>
-    <linearGradient id="v" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0%" stop-color="#fff" stop-opacity="0" />
-      <stop offset="16%" stop-color="#fff" stop-opacity="1" />
-      <stop offset="86%" stop-color="#fff" stop-opacity="1" />
-      <stop offset="100%" stop-color="#fff" stop-opacity="0" />
-    </linearGradient>
-  </defs>
-  <rect width="${PORTRAIT_W}" height="${H}" fill="url(#h)" />
-  <rect width="${PORTRAIT_W}" height="${H}" fill="url(#v)" style="mix-blend-mode:multiply" />
+  <defs>${gradient}</defs>
+  <rect width="${PORTRAIT_W}" height="${H}" fill="#000" />
+  <rect width="${PORTRAIT_W}" height="${H}" fill="url(#g)" />
 </svg>`);
 
-const maskAlpha = await sharp(portraitMask)
-  .ensureAlpha()
-  .extractChannel('red') // gradient is white→black luminance == desired alpha
+const hMask = gradMask(`
+  <linearGradient id="g" x1="0" y1="0" x2="1" y2="0">
+    <stop offset="0%" stop-color="#fff" stop-opacity="0" />
+    <stop offset="12%" stop-color="#fff" stop-opacity="0" />
+    <stop offset="30%" stop-color="#fff" stop-opacity="0.07" />
+    <stop offset="46%" stop-color="#fff" stop-opacity="0.18" />
+    <stop offset="60%" stop-color="#fff" stop-opacity="0.36" />
+    <stop offset="72%" stop-color="#fff" stop-opacity="0.56" />
+    <stop offset="83%" stop-color="#fff" stop-opacity="0.76" />
+    <stop offset="92%" stop-color="#fff" stop-opacity="0.92" />
+    <stop offset="100%" stop-color="#fff" stop-opacity="1" />
+  </linearGradient>`);
+
+const vMask = gradMask(`
+  <linearGradient id="g" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0%" stop-color="#fff" stop-opacity="0" />
+    <stop offset="16%" stop-color="#fff" stop-opacity="1" />
+    <stop offset="86%" stop-color="#fff" stop-opacity="1" />
+    <stop offset="100%" stop-color="#fff" stop-opacity="0" />
+  </linearGradient>`);
+
+const maskAlpha = await sharp(hMask)
+  .composite([{ input: vMask, blend: 'multiply' }])
+  .extractChannel('red') // grayscale luminance == desired alpha
   .toColourspace('b-w')
   .raw()
   .toBuffer();
@@ -162,7 +174,7 @@ const maskAlpha = await sharp(portraitMask)
 const portraitBase = await sharp(path.join(root, 'src/assets/portrait.jpg'))
   .resize(PORTRAIT_W, H, { fit: 'cover', position: 'top' })
   // Mute it so it reads as a faded backdrop rather than a hero shot.
-  .modulate({ saturation: 0.82, brightness: 0.92 })
+  .modulate({ saturation: 0.8, brightness: 0.97 })
   .toColourspace('srgb')
   .ensureAlpha()
   .raw()
