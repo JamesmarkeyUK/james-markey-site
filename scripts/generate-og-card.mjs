@@ -179,7 +179,7 @@ const fadedPortrait = await sharp(portraitBase, {
 // ---------------------------------------------------------------------------
 // Layer 3 — foreground: contrast scrim on the left + all the type.
 // ---------------------------------------------------------------------------
-const statText = `${countryCount} countries · all 7 continents and counting`;
+const statText = `${countryCount} countries and counting · all 7 continents`;
 
 // Measure rendered text width so the chip background always wraps the full
 // string (librsvg has no text-layout API, so trim a probe render instead).
