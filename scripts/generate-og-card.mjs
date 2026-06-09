@@ -127,8 +127,7 @@ const backgroundSvg = `
 // ---------------------------------------------------------------------------
 // Layer 2 — the portrait, faded into the background on the right.
 // ---------------------------------------------------------------------------
-const PORTRAIT_W = 600;
-const PORTRAIT_X = W - PORTRAIT_W; // 600 — right-anchored, sits to the right
+const PORTRAIT_W = 600; // render width; final placement/clip handled below
 
 // The alpha mask is the product of two gradients: a horizontal one that lets
 // the studio-blue creep in very gradually (eased/convex, so black→portrait is
@@ -151,8 +150,8 @@ const hMask = gradMask(`
     <stop offset="46%" stop-color="#fff" stop-opacity="0.18" />
     <stop offset="60%" stop-color="#fff" stop-opacity="0.36" />
     <stop offset="72%" stop-color="#fff" stop-opacity="0.56" />
-    <stop offset="83%" stop-color="#fff" stop-opacity="0.76" />
-    <stop offset="92%" stop-color="#fff" stop-opacity="0.92" />
+    <stop offset="83%" stop-color="#fff" stop-opacity="0.78" />
+    <stop offset="92%" stop-color="#fff" stop-opacity="0.94" />
     <stop offset="100%" stop-color="#fff" stop-opacity="1" />
   </linearGradient>`);
 
@@ -185,6 +184,15 @@ const fadedPortrait = await sharp(portraitBase, {
   raw: { width: PORTRAIT_W, height: H, channels: 4 },
 })
   .joinChannel(maskAlpha, { raw: { width: PORTRAIT_W, height: H, channels: 1 } })
+  .png()
+  .toBuffer();
+
+// Push the subject further right by placing the box past the right edge and
+// keeping only the part that lands on the canvas (the far edge is clipped).
+const PORTRAIT_PLACE_X = 720;
+const portraitVisibleW = W - PORTRAIT_PLACE_X; // 480
+const portraitFinal = await sharp(fadedPortrait)
+  .extract({ left: 0, top: 0, width: portraitVisibleW, height: H })
   .png()
   .toBuffer();
 
@@ -266,7 +274,7 @@ const outPath = path.join(root, 'public/og-default.jpg');
 
 await sharp(Buffer.from(backgroundSvg))
   .composite([
-    { input: fadedPortrait, left: PORTRAIT_X, top: 0 },
+    { input: portraitFinal, left: PORTRAIT_PLACE_X, top: 0 },
     { input: Buffer.from(foregroundSvg), left: 0, top: 0 },
   ])
   .jpeg({ quality: 88, mozjpeg: true })
