@@ -31,3 +31,7 @@ scripts/migrate/cache/
 .dev.vars*
 !.dev.vars.example
 !.env.example
+
+# supabase CLI local state
+supabase/.temp
+supabase/.branches
