@@ -1,7 +1,7 @@
 export const site = {
-  name: 'James Markey',
+  name: 'James Markey MBE',
   url: 'https://jamesmarkey.co.uk',
-  title: 'James Markey — Entrepreneur, Export Champion, Traveller',
+  title: 'James Markey MBE — Entrepreneur, Export Champion, Traveller',
   description:
     'Personal site of James Markey: founder of UNI SIM, Commercial Director of HRV Simulation, UK Export Champion for the Department for Business and Trade, and mental-health advocate.',
   tagline: 'Founder, exporter, traveller — building tools at the cutting edge of technology.',
