@@ -240,7 +240,7 @@ const foregroundSvg = `
 
     <!-- name -->
     <text x="76" y="290" font-family="Fraunces" font-weight="900" font-size="118"
-          fill="#FAFAF7">James Markey</text>
+          fill="#FAFAF7">James Markey MBE</text>
 
     <!-- tagline -->
     <text x="80" y="360" font-family="Inter" font-weight="600" font-size="34"
