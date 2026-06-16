@@ -1,7 +1,8 @@
 ---
-import { Image } from 'astro:assets';
+import { Image, getImage } from 'astro:assets';
 import type { CollectionEntry } from 'astro:content';
 import BaseLayout from './BaseLayout.astro';
+import { site } from '~/data/site';
 import '~/styles/prose.css';
 
 interface Props {
@@ -11,20 +12,53 @@ interface Props {
 const { post } = Astro.props;
 const { title, pubDate, category, hero, heroAlt, excerpt, gallery } = post.data;
 
+// Render a dedicated 1200×630 social-share image from the post hero so links
+// shared to LinkedIn/X/WhatsApp use the post's own image (JPG for max scraper
+// compatibility) instead of the generic site default.
+const ogImage = await getImage({
+  src: hero,
+  width: 1200,
+  height: 630,
+  fit: 'cover',
+  format: 'jpeg',
+});
+
 const formattedDate = pubDate.toLocaleDateString('en-GB', {
   year: 'numeric',
   month: 'long',
   day: 'numeric',
 });
+
+const canonicalURL = new URL(Astro.url.pathname, site.url).toString();
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'BlogPosting',
+  headline: title,
+  description: excerpt,
+  image: new URL(ogImage.src, site.url).toString(),
+  datePublished: pubDate.toISOString(),
+  dateModified: pubDate.toISOString(),
+  url: canonicalURL,
+  mainEntityOfPage: { '@type': 'WebPage', '@id': canonicalURL },
+  articleSection: category,
+  author: { '@type': 'Person', name: 'James Markey', url: site.url },
+  publisher: { '@type': 'Person', name: site.name, url: site.url },
+};
 ---
 
 <BaseLayout
   title={title}
   description={excerpt}
+  image={ogImage.src}
   type="article"
   pubDate={pubDate}
   navVariant="post"
 >
+  <script
+    slot="head"
+    type="application/ld+json"
+    set:html={JSON.stringify(jsonLd)}
+  />
   <article>
     <header class="border-b border-ink-950/10 bg-paper-50 pb-16 pt-32 md:pt-40">
       <div class="container-wide">
