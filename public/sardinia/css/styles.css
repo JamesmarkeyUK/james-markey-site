@@ -796,9 +796,11 @@ p {
    =================================================================== */
 .exp__grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(2, 1fr);
   gap: 1.6rem;
   margin-top: 3rem;
+  max-width: 880px;
+  margin-inline: auto;
 }
 .exp-card {
   position: relative;
