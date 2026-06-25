@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 940 230" role="img" aria-label="Blue Sardinia">
+  <title>Blue Sardinia</title>
+  <g fill="none" stroke="#c9a96b" stroke-width="6.5" stroke-linecap="round" stroke-linejoin="round">
+    <!-- B -->
+    <path d="M48 40 V190" />
+    <path d="M66 40 V190" />
+    <path d="M66 40 H112 C150 40 150 115 112 115 H66" />
+    <path d="M66 115 H120 C164 115 164 190 120 190 H66" />
+    <!-- L -->
+    <path d="M212 40 V190 H300" />
+    <path d="M230 40 V174" />
+    <!-- U -->
+    <path d="M338 40 V128 A62 62 0 0 0 462 128 V40" />
+    <path d="M356 40 V128 A44 44 0 0 0 444 128 V40" />
+    <!-- E — the bow -->
+    <circle cx="585" cy="115" r="70" />
+    <path d="M556 52 V178" />
+    <!-- E — the arrow -->
+    <path d="M508 115 H858" />
+    <path d="M846 95 L896 115 L846 135 Z" fill="#c9a96b" />
+    <path d="M508 115 L538 94 M508 115 L538 136" />
+    <path d="M524 115 L552 97 M524 115 L552 133" />
+  </g>
+</svg>
