@@ -365,20 +365,8 @@ p {
   display: block;
   filter: drop-shadow(0 8px 26px rgba(6, 26, 43, 0.5));
 }
-.hero__logo .arrow {
-  transform-box: fill-box;
-  transform-origin: center;
-  animation: shoot 4.6s var(--ease) infinite;
-}
-@keyframes shoot {
-  0%, 14% { transform: translateX(0); opacity: 1; }
-  30% { transform: translateX(-42px); opacity: 1; }   /* draw back */
-  48% { transform: translateX(150px); opacity: 1; }    /* loose */
-  54% { transform: translateX(380px); opacity: 0; }    /* fly off */
-  55% { transform: translateX(-42px); opacity: 0; }    /* reset, hidden */
-  68% { transform: translateX(-42px); opacity: 1; }    /* re-nock */
-  100% { transform: translateX(0); opacity: 1; }
-}
+/* logo is a faithful, static recreation of the original — the bow gets its
+   animated moment in the dedicated archer band further down the page */
 
 .hero h1 {
   font-size: clamp(2.8rem, 7.5vw, 5.6rem);
@@ -1126,6 +1114,89 @@ p {
 }
 
 /* ===================================================================
+   Archer band — the bow's animated moment
+   =================================================================== */
+.archer {
+  background: linear-gradient(160deg, var(--sea-900), var(--sea-700));
+  color: var(--sand-50);
+  padding-block: clamp(2.4rem, 6vw, 3.8rem);
+  overflow: hidden;
+}
+.archer__scene {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  min-height: 110px;
+}
+.archer__scene::before {
+  /* flight path */
+  content: '';
+  position: absolute;
+  left: 96px;
+  right: 0;
+  top: 50%;
+  height: 1px;
+  background: repeating-linear-gradient(
+    90deg,
+    rgba(232, 200, 120, 0.45) 0 10px,
+    transparent 10px 22px
+  );
+}
+.archer__bow {
+  width: 92px;
+  height: 92px;
+  flex: none;
+  color: var(--gold-400);
+  position: relative;
+  z-index: 2;
+}
+.archer__arrow {
+  position: absolute;
+  left: 44px;
+  top: 50%;
+  width: 148px;
+  height: 40px;
+  color: var(--gold-400);
+  z-index: 1;
+  transform: translateY(-50%);
+  animation: fly 4.6s var(--ease) infinite;
+}
+@keyframes fly {
+  0% { transform: translate(0, -50%); opacity: 0; }
+  6% { transform: translate(0, -50%); opacity: 1; } /* nocked */
+  24% { transform: translate(-26px, -50%); opacity: 1; } /* draw back */
+  42% { transform: translate(55vw, -50%); opacity: 1; } /* loose & fly */
+  50% { transform: translate(120vw, -50%); opacity: 0; } /* exit right */
+  51% { transform: translate(0, -50%); opacity: 0; } /* reset */
+  100% { transform: translate(0, -50%); opacity: 0; }
+}
+.archer__cta {
+  margin-left: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.7rem;
+  text-align: right;
+  position: relative;
+  z-index: 3;
+  padding-left: 1.4rem;
+}
+.archer__cta p {
+  margin: 0;
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: clamp(1.15rem, 2.4vw, 1.5rem);
+  color: var(--foam);
+}
+
+@media (max-width: 620px) {
+  .archer__cta p {
+    display: none;
+  }
+}
+
+/* ===================================================================
    Footer
    =================================================================== */
 .site-footer {
@@ -1231,8 +1302,9 @@ p {
   }
   .strip__track,
   .scroll-cue::after,
-  .hero__logo .arrow {
+  .archer__arrow {
     animation: none;
+    opacity: 1;
   }
 }
 
