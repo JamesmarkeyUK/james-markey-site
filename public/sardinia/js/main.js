@@ -97,6 +97,24 @@
     });
   }
 
+  /* ---------- Graceful image fallback ----------
+     If a hotlinked photo fails to load, remove it cleanly rather than show a
+     broken-image icon: gallery tiles drop out (the grid reflows), while
+     hero/feature photos fall back to the Mediterranean gradient. */
+  const handleBrokenImage = (img) => {
+    const figure = img.closest('figure');
+    if (figure) {
+      figure.remove();
+      return;
+    }
+    img.style.display = 'none';
+    if (img.parentElement) img.parentElement.classList.add('img-fallback');
+  };
+  document.querySelectorAll('img').forEach((img) => {
+    if (img.complete && img.naturalWidth === 0) handleBrokenImage(img);
+    else img.addEventListener('error', () => handleBrokenImage(img));
+  });
+
   /* ---------- Footer year ---------- */
   const year = document.getElementById('year');
   if (year) year.textContent = new Date().getFullYear();

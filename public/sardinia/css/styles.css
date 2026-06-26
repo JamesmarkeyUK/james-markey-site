@@ -1281,6 +1281,16 @@ p {
   opacity: 0.7;
 }
 
+/* ---------- Broken-image fallback (set by js/main.js) ---------- */
+.img-fallback {
+  background-image: linear-gradient(160deg, var(--sea-700), var(--sea-500));
+}
+.about__media.img-fallback {
+  aspect-ratio: 4 / 5;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-md);
+}
+
 /* ===================================================================
    Reveal on scroll
    =================================================================== */
